@@ -1,10 +1,62 @@
-# macOS
+# ═══════════════════════════════════════════════════════════════════
+#  NEVER PUBLISH — assessment material and student data
+#  These folders are blocked wholesale. Nothing inside them can be
+#  committed, even with `git add`, unless this file is changed first.
+# ═══════════════════════════════════════════════════════════════════
+06_Quizzes/
+07_Exams/
+11_Grades_and_Rubrics/
+
+# Assessment material that may live outside those folders
+**/*exam*
+**/*Exam*
+**/*EXAM*
+**/*quiz*
+**/*Quiz*
+**/*QUIZ*
+**/*midterm*
+**/*Midterm*
+**/*final_exam*
+**/*answer_key*
+**/*AnswerKey*
+**/*solution*
+**/*Solution*
+**/*solutions*
+**/*marking*
+**/*grade*
+**/*Grade*
+**/*grades*
+**/*marks*
+
+# Student data and submissions
+**/submissions/
+**/Submissions/
+**/student_data/
+**/*roster*
+**/*Roster*
+**/*attendance*
+
+# ═══════════════════════════════════════════════════════════════════
+#  Build artefacts and large working files
+# ═══════════════════════════════════════════════════════════════════
+# SCORM packages — built for Blackboard, not distributed via the repo
+**/*_SCORM/
+**/*_SCORM.zip
+
+# Source PowerPoints — large working files (published lecture is the HTML)
+03_Lectures/**/*.pptx
+
+# Scaffold placeholders — noise, not content
+**/_PLACEHOLDER.md
+**/DROP_SYLLABUS_HERE.md
+
+# ═══════════════════════════════════════════════════════════════════
+#  System and tooling
+# ═══════════════════════════════════════════════════════════════════
 .DS_Store
 ._*
 .Spotlight-V100
 .Trashes
-
-# Python
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
@@ -12,27 +64,14 @@ __pycache__/
 venv/
 env/
 *.egg-info/
-
-# Jupyter / editors
 .vscode/
 .idea/
-
-# Working files
 *.bak
 *.tmp
 ~$*
 *.log
-
-# Student submissions and grades — never publish
-11_Grades_and_Rubrics/**/submissions/
-**/submissions/
-**/*grades*.csv
-**/*grades*.xlsx
-
-# Source PowerPoints — large working files, not distributed to students
-# (the published lecture is the HTML / SCORM package)
-03_Lectures/**/*.pptx
-
-# SCORM packages — built for Blackboard, not distributed via the repo
-**/*_SCORM/
-**/*_SCORM.zip
+.env
+*.key
+*.pem
+credentials*
+secrets*

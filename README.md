@@ -23,21 +23,21 @@ Prefer to work locally? You will need Python 3.10+ with `numpy`, `pandas`,
 
 ## Repository structure
 
+Folders appear here as material is published during the semester.
+
 | Folder | Contents |
 |--------|----------|
-| `00_Course_Admin` | Course profile and administrative notes |
 | `01_Syllabus_and_CLOs` | Syllabus and course learning outcomes |
-| `02_Semester_Plan` | Week-by-week plan |
 | `03_Lectures` | Lecture slides and notes, one folder per week |
 | `04_Labs_and_Notebooks` | Lab notebooks and tutorials |
 | `05_Assignments` | Assignment briefs |
-| `06_Quizzes` | Quiz materials |
-| `07_Exams` | Exam information |
 | `08_Course_Project` | Team project brief and milestones |
 | `09_Datasets` | Datasets used in labs |
-| `10_Code_and_Experiments` | Shared code and experiments |
-| `11_Grades_and_Rubrics` | Grading rubrics |
 | `12_Papers_and_Resources` | Required reading and references |
+
+**Not published here.** Quizzes, exams, marking schemes, solutions and all
+grade records are distributed through **Blackboard** only. They are excluded
+from this repository by design.
 
 ---
 
