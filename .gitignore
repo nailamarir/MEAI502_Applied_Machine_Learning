@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Jupyter / editors
+.vscode/
+.idea/
+
+# Working files
+*.bak
+*.tmp
+~$*
+*.log
+
+# Student submissions and grades — never publish
+11_Grades_and_Rubrics/**/submissions/
+**/submissions/
+**/*grades*.csv
+**/*grades*.xlsx
