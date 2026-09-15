@@ -28,3 +28,7 @@ env/
 **/submissions/
 **/*grades*.csv
 **/*grades*.xlsx
+
+# Source PowerPoints — large working files, not distributed to students
+# (the published lecture is the HTML / SCORM package)
+03_Lectures/**/*.pptx
