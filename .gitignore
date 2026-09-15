@@ -32,3 +32,7 @@ env/
 # Source PowerPoints — large working files, not distributed to students
 # (the published lecture is the HTML / SCORM package)
 03_Lectures/**/*.pptx
+
+# SCORM packages — built for Blackboard, not distributed via the repo
+**/*_SCORM/
+**/*_SCORM.zip
