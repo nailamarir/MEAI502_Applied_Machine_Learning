@@ -1,6 +1,6 @@
 # Lecture 2 — Linear Regression
 
-**File:** `MEAI502_Lecture02_Linear_Regression.html` (72 slides, self-contained, open in any browser)
+**File:** `MEAI502_Lecture02_Linear_Regression.html` (65 slides, self-contained, open in any browser)
 
 Rebuilt from `Ressource/Lec2 LinearReg (2) (2).pptx` in the same dark presentation
 style as Lecture 1.
@@ -24,14 +24,22 @@ poll the room first.
 
 | Slides | Section | Content |
 |--------|---------|---------|
-| 1–11 | SETUP | Title, the four notions, housing example, notation, quiz 1 |
-| 12–16 | MODEL | Supervised learning diagram, hypothesis <var>h</var>, what θ₀ and θ₁ do, quiz 2 |
-| 17–24 | COST | Which line? · the error term · why squared · building <var>J</var> · the objective · loss vs cost |
-| 25–35 | INTUITION | Simplify to θ₁ · data space vs parameter space · θ₁ = 1, 0.5, 0 · quiz 3 · the parabola · the bowl · contour plots |
-| 36–48 | DESCENT | The idea · update rule · learning rate α · too small/too large · simultaneous update · sign arguments · quiz 4 · stopping rules |
-| 49–56 | TOGETHER | The two halves joined · the derivatives · the full algorithm · convexity · watch it learn |
-| 57–65 | MULTIPLE | Many features · <var>n</var> vs <var>m</var> · quiz 5 · multivariate hypothesis · the <var>x</var>₀ = 1 trick · gradient descent unchanged |
-| 66–72 | NEXT | Recap · what carries forward · Lab 3 preview · reflection · contact |
+| 1–10 | SETUP | Title, the four notions, housing example, notation, quiz 1 |
+| 11–15 | MODEL | Supervised learning diagram, hypothesis *h*, what θ₀ and θ₁ do, quiz 2 |
+| 16–23 | COST | Which line? · the error term · why squared · building *J* · the objective · loss vs cost |
+| 24–33 | INTUITION | Simplify to θ₁ · data space vs parameter space · θ₁ = 1, 0.5, 0 · quiz 3 · the parabola · the bowl · contour plots |
+| 34–44 | DESCENT | The idea · update rule · learning rate α · too small/too large · simultaneous update · the sign argument · quiz 4 · stopping rules |
+| 45–50 | TOGETHER | The two halves joined · the derivatives · the full algorithm · convexity · watch it learn |
+| 51–58 | MULTIPLE | Many features · *n* vs *m* · quiz 5 · multivariate hypothesis · the *x*₀ = 1 trick · gradient descent generalised |
+| 59–65 | NEXT | Recap · what carries forward · Lab 2 preview · reflection · contact |
+
+## Colour
+
+Each section carries its own accent hue, applied to the heading, the left rail,
+rules and highlights — **blue** SETUP, **green** MODEL, **gold** COST,
+**violet** INTUITION, **coral** DESCENT, **teal** TOGETHER, **indigo** MULTIPLE.
+The outline on slide 3 shows all eight at once, so students can place themselves
+without reading the rail.
 
 ## The teaching spine
 
