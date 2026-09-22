@@ -1,6 +1,13 @@
 # Lecture 2 — Linear Regression
 
-**File:** `MEAI502_Lecture02_Linear_Regression.html` (65 slides, self-contained, open in any browser)
+**Two files, same 65 slides, same content — only the theme differs:**
+
+| File | Background | Use it for |
+|---|---|---|
+| `MEAI502_Lecture02_Linear_Regression.html` | **Dark** | Projecting in a darkened lecture hall |
+| `MEAI502_Lecture02_Linear_Regression_Light.html` | **White** | Printing, handouts, bright rooms, screen sharing |
+
+Both are self-contained single files — no external images, no network needed.
 
 Rebuilt from `Ressource/Lec2 LinearReg (2) (2).pptx` in the same dark presentation
 style as Lecture 1.
@@ -40,6 +47,11 @@ rules and highlights — **blue** SETUP, **green** MODEL, **gold** COST,
 **violet** INTUITION, **coral** DESCENT, **teal** TOGETHER, **indigo** MULTIPLE.
 The outline on slide 3 shows all eight at once, so students can place themselves
 without reading the rail.
+
+The light version uses the same eight hues, darkened for contrast against white.
+The inline SVG diagrams are recoloured too, since SVG attributes cannot inherit
+CSS variables. The two dark code panels on the simultaneous-update slide stay
+dark in both versions — they read as code blocks on white.
 
 ## The teaching spine
 
