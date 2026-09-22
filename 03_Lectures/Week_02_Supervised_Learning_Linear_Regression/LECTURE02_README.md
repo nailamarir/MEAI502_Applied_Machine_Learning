@@ -44,17 +44,17 @@ without reading the rail.
 ## The teaching spine
 
 The lecture is built on **four notions** introduced on slide 6 and closed on
-slide 56: *dataset · model and parameters · cost function · learning algorithm*.
+slide 50: *dataset · model and parameters · cost function · learning algorithm*.
 The speaker notes return to them repeatedly, because they are the frame every
 later algorithm in the course fits into.
 
-**The hardest slide is 27** — the distinction between *data space* (a plot of
+**The hardest slide is 26** — the distinction between *data space* (a plot of
 <var>h</var> against <var>x</var>) and *parameter space* (a plot of <var>J</var>
 against θ). The notes flag it as the one idea that, on its own, justifies the
-lecture. Slide 55 pays it off with both views of a single training run
+lecture. Slide 50 pays it off with both views of a single training run
 side by side.
 
-**The most important quiz is slide 31**, where students compute <var>J</var>(0)
+**The most important quiz is slide 30**, where students compute <var>J</var>(0)
 by hand. It is the first time they use the cost function as a tool rather than
 watch it being used. Pressing `R` shows the full working, not just the letter.
 
@@ -64,11 +64,11 @@ Five, all from your original deck, with distractors preserved:
 
 | Slide | Question | Answer |
 |-------|----------|--------|
-| 11 | What is <var>y</var><sup>(3)</sup>? | B — 315 |
-| 16 | Read θ₀ and θ₁ off the line | B — θ₀ = 0.5, θ₁ = 1 |
-| 31 | What is <var>J</var>(0)? | D — 14/6 ≈ 2.33 |
-| 47 | One GD step at a local optimum? | A — θ₁ unchanged |
-| 60 | What is <var>x</var>₁<sup>(4)</sup>? | A — 852 |
+| 10 | What is <var>y</var><sup>(3)</sup>? | B — 315 |
+| 15 | Read θ₀ and θ₁ off the line | B — θ₀ = 0.5, θ₁ = 1 |
+| 30 | What is <var>J</var>(0)? | D — 14/6 ≈ 2.33 |
+| 43 | One GD step at a local optimum? | A — θ₁ unchanged |
+| 54 | What is <var>x</var>₁<sup>(4)</sup>? | A — 852 |
 
 The speaker notes treat each wrong option as a **diagnostic** — they say what
 a student who picks it has misunderstood, and what to re-teach.
@@ -82,19 +82,20 @@ convex/non-convex surface comparison, the gradient descent rule panels, and the
 multivariate notation notes.
 
 The five **animated GIFs** in the original are embedded as their most
-informative single frame — the convergence/divergence pair on slide 42 and the
-two-panel training run on slide 55 are the two that matter most. The originals
+informative single frame — the convergence/divergence pair on slide 40 and the
+two-panel training run on slide 50 are the two that matter most. The originals
 are still in `Ressource/` if you want to project them moving.
 
 TIFFs were converted, everything was recompressed, and all of it is base64-encoded
 inside the single HTML file — **no external image files, no network needed.**
 
-Three diagrams are drawn as **inline SVG** in the deck's own colours, because
+Four diagrams are drawn as **inline SVG** in the deck's own colours, because
 the PPTX had no usable figure for them:
 
-- Slide 13 — the supervised learning flow (training set → algorithm → <var>h</var> → prediction)
-- Slide 15 — what θ₀ and θ₁ each do to the line
-- Slide 20 — one example's error, drawn on the data
+- Slide 12 — the supervised learning flow (training set → algorithm → <var>h</var> → prediction)
+- Slide 14 — what θ₀ and θ₁ each do to the line
+- Slide 19 — one example's error, drawn on the data
+- Slide 42 — the sign of the derivative, both cases
 
 ## What changed from the original PPTX
 
@@ -103,16 +104,16 @@ the repeated notation slide (old slides 9 and 65 were identical).
 
 **Added** — material the original assumed you would say aloud:
 
-- **Slide 15** — what θ₀ and θ₁ *mean* (intercept and slope, in dollars per square foot)
-- **Slide 19** — the idea, unpacked into three questions before the formula appears
-- **Slide 20** — the error term for a single example, drawn
-- **Slide 21** — *why squared*, as a table: cancellation, differentiability, outlier sensitivity, and the MAE trade-off
-- **Slide 24** — loss vs cost function
-- **Slide 41** — α as a **hyperparameter**, and the parameter/hyperparameter distinction
-- **Slide 48** — stopping rules: what "repeat until convergence" actually means in code
-- **Slides 44–46** — the sign argument, split into the two cases
-- **Slide 68** — what carries forward to Weeks 4, 5, 8, 9, 12, 13
-- **Slide 71** — a closing reflection on loss choice as an ethical decision
+- **Slide 14** — what θ₀ and θ₁ *mean* (intercept and slope, in dollars per square foot)
+- **Slide 18** — the idea, unpacked into three questions before the formula appears
+- **Slide 19** — the error term for a single example, drawn
+- **Slide 20** — *why squared*, as a table: cancellation, differentiability, outlier sensitivity, and the MAE trade-off
+- **Slide 23** — loss vs cost function
+- **Slide 39** — α as a **hyperparameter**, and the parameter/hyperparameter distinction
+- **Slide 44** — stopping rules: what "repeat until convergence" actually means in code
+- **Slide 42** — the sign argument, both cases in one figure
+- **Slide 62** — what carries forward to Weeks 4, 5, 8, 9, 12, 13
+- **Slide 65** — a closing reflection on loss choice as an ethical decision
 
 **Preserved** — the original teaching sequence exactly: the four notions, the
 housing example, the notation build, the simplification to θ₁, the three
@@ -124,9 +125,9 @@ original quiz questions are intact, with their original distractors.
 
 - **Textbook:** Burkov, *The Hundred-Page Machine Learning Book* — Chapter 3.1
 - **Syllabus:** Week 2, "Supervised learning: linear regression"
-- **Lab:** Lab 3 (data collection and discovery) is previewed on slide 69;
-  Lab 4 fits this model to the data students collect
-- **Back-references:** Lab 1 (the lifecycle, Stages 1–3) on slides 7, 8, 30, 58;
-  Lab 1 part 2 (`StandardScaler`, baselines) on slides 30, 34, 51, 65
+- **Lab:** Lab 2 (data collection and understanding) is previewed on slide 63;
+  Lab 3 fits this model to the data students collect
+- **Back-references:** Lab 1 (the lifecycle, Stages 1–3) on slides 6, 7, 29, 52;
+  Lab 1 part 2 (`StandardScaler`, baselines) on slides 29, 33, 47, 59
 - **Forward references:** Weeks 3, 4, 5, 8, 9, 12 and 13 are marked on the slides
   and explained in the notes
