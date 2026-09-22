@@ -1,0 +1,1451 @@
+{
+ "meta": {
+  "source": "Open-Meteo ERA5",
+  "licence": "CC-BY 4.0",
+  "city": "Jeddah",
+  "generated": "2026-09-01T08:00:00Z",
+  "count": 120
+ },
+ "records": [
+  {
+   "observed_on": "2023-01-01",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 26.8,
+    "humidity_pct": 83.0,
+    "solar_mj_m2": 14.74
+   }
+  },
+  {
+   "observed_on": "2023-01-07",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 25.3,
+    "humidity_pct": 72.0,
+    "solar_mj_m2": 16.55
+   }
+  },
+  {
+   "observed_on": "2023-01-13",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 26.8,
+    "humidity_pct": 59.0,
+    "solar_mj_m2": 12.34
+   }
+  },
+  {
+   "observed_on": "2023-01-19",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 30.8,
+    "humidity_pct": 51.0,
+    "solar_mj_m2": 17.02
+   }
+  },
+  {
+   "observed_on": "2023-01-25",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 27.1,
+    "humidity_pct": 70.0,
+    "solar_mj_m2": 16.32
+   }
+  },
+  {
+   "observed_on": "2023-01-31",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 30.3,
+    "humidity_pct": 72.0,
+    "solar_mj_m2": 16.81
+   }
+  },
+  {
+   "observed_on": "2023-02-06",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 26.8,
+    "humidity_pct": 70.0,
+    "solar_mj_m2": 16.47
+   }
+  },
+  {
+   "observed_on": "2023-02-12",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.3,
+    "humidity_pct": 73.0,
+    "solar_mj_m2": 17.72
+   }
+  },
+  {
+   "observed_on": "2023-02-18",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.7,
+    "humidity_pct": 61.0,
+    "solar_mj_m2": 19.5
+   }
+  },
+  {
+   "observed_on": "2023-02-24",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.8,
+    "humidity_pct": 54.0,
+    "solar_mj_m2": 21.43
+   }
+  },
+  {
+   "observed_on": "2023-03-02",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 32.2,
+    "humidity_pct": 62.0,
+    "solar_mj_m2": 20.18
+   }
+  },
+  {
+   "observed_on": "2023-03-08",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 30.6,
+    "humidity_pct": 66.0,
+    "solar_mj_m2": 20.65
+   }
+  },
+  {
+   "observed_on": "2023-03-14",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 29.3,
+    "humidity_pct": 60.0,
+    "solar_mj_m2": 22.58
+   }
+  },
+  {
+   "observed_on": "2023-03-20",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.3,
+    "humidity_pct": 51.0,
+    "solar_mj_m2": 24.1
+   }
+  },
+  {
+   "observed_on": "2023-03-26",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.9,
+    "humidity_pct": 60.0,
+    "solar_mj_m2": 24.19
+   }
+  },
+  {
+   "observed_on": "2023-04-01",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.2,
+    "humidity_pct": 68.0,
+    "solar_mj_m2": 25.13
+   }
+  },
+  {
+   "observed_on": "2023-04-07",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 30.2,
+    "humidity_pct": 68.0,
+    "solar_mj_m2": 20.87
+   }
+  },
+  {
+   "observed_on": "2023-04-13",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 29.3,
+    "humidity_pct": 42.0,
+    "solar_mj_m2": 21.6
+   }
+  },
+  {
+   "observed_on": "2023-04-19",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.4,
+    "humidity_pct": 58.0,
+    "solar_mj_m2": 24.33
+   }
+  },
+  {
+   "observed_on": "2023-04-25",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.9,
+    "humidity_pct": 47.0,
+    "solar_mj_m2": 25.49
+   }
+  },
+  {
+   "observed_on": "2023-05-01",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 30.5,
+    "humidity_pct": 60.0,
+    "solar_mj_m2": 26.23
+   }
+  },
+  {
+   "observed_on": "2023-05-07",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.9,
+    "humidity_pct": 51.0,
+    "solar_mj_m2": 26.34
+   }
+  },
+  {
+   "observed_on": "2023-05-13",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.4,
+    "humidity_pct": 66.0,
+    "solar_mj_m2": 26.23
+   }
+  },
+  {
+   "observed_on": "2023-05-19",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.8,
+    "humidity_pct": 59.0,
+    "solar_mj_m2": 26.45
+   }
+  },
+  {
+   "observed_on": "2023-05-25",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.4,
+    "humidity_pct": 62.0,
+    "solar_mj_m2": 25.53
+   }
+  },
+  {
+   "observed_on": "2023-05-31",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.1,
+    "humidity_pct": 70.0,
+    "solar_mj_m2": 25.33
+   }
+  },
+  {
+   "observed_on": "2023-06-06",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.4,
+    "humidity_pct": 71.0,
+    "solar_mj_m2": 25.47
+   }
+  },
+  {
+   "observed_on": "2023-06-12",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.3,
+    "humidity_pct": 51.0,
+    "solar_mj_m2": 25.39
+   }
+  },
+  {
+   "observed_on": "2023-06-18",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.6,
+    "humidity_pct": 67.0,
+    "solar_mj_m2": 25.44
+   }
+  },
+  {
+   "observed_on": "2023-06-24",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.3,
+    "humidity_pct": 56.0,
+    "solar_mj_m2": 25.46
+   }
+  },
+  {
+   "observed_on": "2023-06-30",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.7,
+    "humidity_pct": 54.0,
+    "solar_mj_m2": 23.2
+   }
+  },
+  {
+   "observed_on": "2023-07-06",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.4,
+    "humidity_pct": 56.0,
+    "solar_mj_m2": 25.08
+   }
+  },
+  {
+   "observed_on": "2023-07-12",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.5,
+    "humidity_pct": 56.0,
+    "solar_mj_m2": 20.24
+   }
+  },
+  {
+   "observed_on": "2023-07-18",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.5,
+    "humidity_pct": 50.0,
+    "solar_mj_m2": 23.46
+   }
+  },
+  {
+   "observed_on": "2023-07-24",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 39.4,
+    "humidity_pct": 35.0,
+    "solar_mj_m2": 25.46
+   }
+  },
+  {
+   "observed_on": "2023-07-30",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 37.3,
+    "humidity_pct": 60.0,
+    "solar_mj_m2": 25.2
+   }
+  },
+  {
+   "observed_on": "2023-08-05",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 38.0,
+    "humidity_pct": 55.0,
+    "solar_mj_m2": 24.81
+   }
+  },
+  {
+   "observed_on": "2023-08-11",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.2,
+    "humidity_pct": 59.0,
+    "solar_mj_m2": 24.84
+   }
+  },
+  {
+   "observed_on": "2023-08-17",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.5,
+    "humidity_pct": 75.0,
+    "solar_mj_m2": 19.77
+   }
+  },
+  {
+   "observed_on": "2023-08-23",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 38.0,
+    "humidity_pct": 63.0,
+    "solar_mj_m2": 23.52
+   }
+  },
+  {
+   "observed_on": "2023-08-29",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 37.1,
+    "humidity_pct": 62.0,
+    "solar_mj_m2": 23.52
+   }
+  },
+  {
+   "observed_on": "2023-09-04",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.2,
+    "humidity_pct": 74.0,
+    "solar_mj_m2": 21.83
+   }
+  },
+  {
+   "observed_on": "2023-09-10",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.1,
+    "humidity_pct": 72.0,
+    "solar_mj_m2": 22.53
+   }
+  },
+  {
+   "observed_on": "2023-09-16",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.7,
+    "humidity_pct": 66.0,
+    "solar_mj_m2": 22.6
+   }
+  },
+  {
+   "observed_on": "2023-09-22",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.0,
+    "humidity_pct": 62.0,
+    "solar_mj_m2": 21.68
+   }
+  },
+  {
+   "observed_on": "2023-09-28",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.2,
+    "humidity_pct": 72.0,
+    "solar_mj_m2": 21.05
+   }
+  },
+  {
+   "observed_on": "2023-10-04",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.2,
+    "humidity_pct": 80.0,
+    "solar_mj_m2": 21.37
+   }
+  },
+  {
+   "observed_on": "2023-10-10",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.8,
+    "humidity_pct": 66.0,
+    "solar_mj_m2": 20.8
+   }
+  },
+  {
+   "observed_on": "2023-10-16",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.8,
+    "humidity_pct": 73.0,
+    "solar_mj_m2": 20.03
+   }
+  },
+  {
+   "observed_on": "2023-10-22",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.0,
+    "humidity_pct": 76.0,
+    "solar_mj_m2": 19.27
+   }
+  },
+  {
+   "observed_on": "2023-10-28",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.7,
+    "humidity_pct": 67.0,
+    "solar_mj_m2": 16.47
+   }
+  },
+  {
+   "observed_on": "2023-11-03",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.3,
+    "humidity_pct": 68.0,
+    "solar_mj_m2": 15.83
+   }
+  },
+  {
+   "observed_on": "2023-11-09",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.1,
+    "humidity_pct": 65.0,
+    "solar_mj_m2": 15.61
+   }
+  },
+  {
+   "observed_on": "2023-11-15",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 29.8,
+    "humidity_pct": 76.0,
+    "solar_mj_m2": 11.7
+   }
+  },
+  {
+   "observed_on": "2023-11-21",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.8,
+    "humidity_pct": 65.0,
+    "solar_mj_m2": 16.35
+   }
+  },
+  {
+   "observed_on": "2023-11-27",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 32.0,
+    "humidity_pct": 74.0,
+    "solar_mj_m2": 16.02
+   }
+  },
+  {
+   "observed_on": "2023-12-03",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 31.4,
+    "humidity_pct": 73.0,
+    "solar_mj_m2": 12.07
+   }
+  },
+  {
+   "observed_on": "2023-12-09",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 32.3,
+    "humidity_pct": 65.0,
+    "solar_mj_m2": 15.4
+   }
+  },
+  {
+   "observed_on": "2023-12-15",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.4,
+    "humidity_pct": 37.0,
+    "solar_mj_m2": 16.14
+   }
+  },
+  {
+   "observed_on": "2023-12-21",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 32.3,
+    "humidity_pct": 66.0,
+    "solar_mj_m2": 14.82
+   }
+  },
+  {
+   "observed_on": "2023-12-27",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 27.8,
+    "humidity_pct": 74.0,
+    "solar_mj_m2": 12.63
+   }
+  },
+  {
+   "observed_on": "2024-01-02",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.6,
+    "humidity_pct": 64.0,
+    "solar_mj_m2": 14.98
+   }
+  },
+  {
+   "observed_on": "2024-01-08",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 30.1,
+    "humidity_pct": 64.0,
+    "solar_mj_m2": 16.16
+   }
+  },
+  {
+   "observed_on": "2024-01-14",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.1,
+    "humidity_pct": 70.0,
+    "solar_mj_m2": 15.47
+   }
+  },
+  {
+   "observed_on": "2024-01-20",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.8,
+    "humidity_pct": 66.0,
+    "solar_mj_m2": 16.66
+   }
+  },
+  {
+   "observed_on": "2024-01-26",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 23.5,
+    "humidity_pct": 63.0,
+    "solar_mj_m2": 8.49
+   }
+  },
+  {
+   "observed_on": "2024-02-01",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 24.6,
+    "humidity_pct": 52.0,
+    "solar_mj_m2": 17.9
+   }
+  },
+  {
+   "observed_on": "2024-02-07",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 29.4,
+    "humidity_pct": 54.0,
+    "solar_mj_m2": 16.81
+   }
+  },
+  {
+   "observed_on": "2024-02-13",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 27.8,
+    "humidity_pct": 76.0,
+    "solar_mj_m2": 16.32
+   }
+  },
+  {
+   "observed_on": "2024-02-19",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 27.1,
+    "humidity_pct": 62.0,
+    "solar_mj_m2": 19.58
+   }
+  },
+  {
+   "observed_on": "2024-02-25",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 29.3,
+    "humidity_pct": 63.0,
+    "solar_mj_m2": 20.81
+   }
+  },
+  {
+   "observed_on": "2024-03-02",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 29.6,
+    "humidity_pct": 65.0,
+    "solar_mj_m2": 20.01
+   }
+  },
+  {
+   "observed_on": "2024-03-08",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 27.8,
+    "humidity_pct": 69.0,
+    "solar_mj_m2": 23.25
+   }
+  },
+  {
+   "observed_on": "2024-03-14",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.0,
+    "humidity_pct": 70.0,
+    "solar_mj_m2": 22.49
+   }
+  },
+  {
+   "observed_on": "2024-03-20",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.2,
+    "humidity_pct": 52.0,
+    "solar_mj_m2": 23.42
+   }
+  },
+  {
+   "observed_on": "2024-03-26",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 27.9,
+    "humidity_pct": 56.0,
+    "solar_mj_m2": 24.91
+   }
+  },
+  {
+   "observed_on": "2024-04-01",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 31.6,
+    "humidity_pct": 61.0,
+    "solar_mj_m2": 22.41
+   }
+  },
+  {
+   "observed_on": "2024-04-07",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 32.4,
+    "humidity_pct": 59.0,
+    "solar_mj_m2": 23.22
+   }
+  },
+  {
+   "observed_on": "2024-04-13",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 29.8,
+    "humidity_pct": 72.0,
+    "solar_mj_m2": 25.99
+   }
+  },
+  {
+   "observed_on": "2024-04-19",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.2,
+    "humidity_pct": 54.0,
+    "solar_mj_m2": 25.8
+   }
+  },
+  {
+   "observed_on": "2024-04-25",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.6,
+    "humidity_pct": 49.0,
+    "solar_mj_m2": 24.99
+   }
+  },
+  {
+   "observed_on": "2024-05-01",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 32.2,
+    "humidity_pct": 63.0,
+    "solar_mj_m2": 26.08
+   }
+  },
+  {
+   "observed_on": "2024-05-07",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.8,
+    "humidity_pct": 46.0,
+    "solar_mj_m2": 26.53
+   }
+  },
+  {
+   "observed_on": "2024-05-13",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.4,
+    "humidity_pct": 63.0,
+    "solar_mj_m2": 25.41
+   }
+  },
+  {
+   "observed_on": "2024-05-19",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.9,
+    "humidity_pct": 65.0,
+    "solar_mj_m2": 25.74
+   }
+  },
+  {
+   "observed_on": "2024-05-25",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.6,
+    "humidity_pct": 67.0,
+    "solar_mj_m2": 26.05
+   }
+  },
+  {
+   "observed_on": "2024-05-31",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.1,
+    "humidity_pct": 50.0,
+    "solar_mj_m2": 26.04
+   }
+  },
+  {
+   "observed_on": "2024-06-06",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 38.2,
+    "humidity_pct": 62.0,
+    "solar_mj_m2": 26.13
+   }
+  },
+  {
+   "observed_on": "2024-06-12",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.0,
+    "humidity_pct": 54.0,
+    "solar_mj_m2": 25.83
+   }
+  },
+  {
+   "observed_on": "2024-06-18",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.9,
+    "humidity_pct": 69.0,
+    "solar_mj_m2": 25.54
+   }
+  },
+  {
+   "observed_on": "2024-06-24",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.2,
+    "humidity_pct": 49.0,
+    "solar_mj_m2": 25.43
+   }
+  },
+  {
+   "observed_on": "2024-06-30",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 38.0,
+    "humidity_pct": 48.0,
+    "solar_mj_m2": 25.61
+   }
+  },
+  {
+   "observed_on": "2024-07-06",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 37.0,
+    "humidity_pct": 43.0,
+    "solar_mj_m2": 25.9
+   }
+  },
+  {
+   "observed_on": "2024-07-12",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 37.6,
+    "humidity_pct": 47.0,
+    "solar_mj_m2": 21.45
+   }
+  },
+  {
+   "observed_on": "2024-07-18",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.6,
+    "humidity_pct": 62.0,
+    "solar_mj_m2": 25.0
+   }
+  },
+  {
+   "observed_on": "2024-07-24",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 38.6,
+    "humidity_pct": 53.0,
+    "solar_mj_m2": 24.7
+   }
+  },
+  {
+   "observed_on": "2024-07-30",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.6,
+    "humidity_pct": 64.0,
+    "solar_mj_m2": 22.95
+   }
+  },
+  {
+   "observed_on": "2024-08-05",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 37.7,
+    "humidity_pct": 66.0,
+    "solar_mj_m2": 22.64
+   }
+  },
+  {
+   "observed_on": "2024-08-11",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 37.1,
+    "humidity_pct": 69.0,
+    "solar_mj_m2": 23.25
+   }
+  },
+  {
+   "observed_on": "2024-08-17",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 37.1,
+    "humidity_pct": 60.0,
+    "solar_mj_m2": 21.34
+   }
+  },
+  {
+   "observed_on": "2024-08-23",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.0,
+    "humidity_pct": 67.0,
+    "solar_mj_m2": 22.94
+   }
+  },
+  {
+   "observed_on": "2024-08-29",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.2,
+    "humidity_pct": 72.0,
+    "solar_mj_m2": 22.42
+   }
+  },
+  {
+   "observed_on": "2024-09-04",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.4,
+    "humidity_pct": 69.0,
+    "solar_mj_m2": 21.96
+   }
+  },
+  {
+   "observed_on": "2024-09-10",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.6,
+    "humidity_pct": 56.0,
+    "solar_mj_m2": 22.86
+   }
+  },
+  {
+   "observed_on": "2024-09-16",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 35.3,
+    "humidity_pct": 71.0,
+    "solar_mj_m2": 21.91
+   }
+  },
+  {
+   "observed_on": "2024-09-22",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.3,
+    "humidity_pct": 77.0,
+    "solar_mj_m2": 21.9
+   }
+  },
+  {
+   "observed_on": "2024-09-28",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 36.4,
+    "humidity_pct": 74.0,
+    "solar_mj_m2": 21.78
+   }
+  },
+  {
+   "observed_on": "2024-10-04",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 34.4,
+    "humidity_pct": 67.0,
+    "solar_mj_m2": 21.36
+   }
+  },
+  {
+   "observed_on": "2024-10-10",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.9,
+    "humidity_pct": 77.0,
+    "solar_mj_m2": 18.84
+   }
+  },
+  {
+   "observed_on": "2024-10-16",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 38.5,
+    "humidity_pct": 44.0,
+    "solar_mj_m2": 20.51
+   }
+  },
+  {
+   "observed_on": "2024-10-22",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.2,
+    "humidity_pct": 75.0,
+    "solar_mj_m2": 19.21
+   }
+  },
+  {
+   "observed_on": "2024-10-28",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.0,
+    "humidity_pct": 73.0,
+    "solar_mj_m2": 17.8
+   }
+  },
+  {
+   "observed_on": "2024-11-03",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 31.4,
+    "humidity_pct": 74.0,
+    "solar_mj_m2": 16.69
+   }
+  },
+  {
+   "observed_on": "2024-11-09",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 32.7,
+    "humidity_pct": 69.0,
+    "solar_mj_m2": 17.6
+   }
+  },
+  {
+   "observed_on": "2024-11-15",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 31.2,
+    "humidity_pct": 79.0,
+    "solar_mj_m2": 16.88
+   }
+  },
+  {
+   "observed_on": "2024-11-21",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 29.9,
+    "humidity_pct": 63.0,
+    "solar_mj_m2": 16.79
+   }
+  },
+  {
+   "observed_on": "2024-11-27",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 28.4,
+    "humidity_pct": 66.0,
+    "solar_mj_m2": 15.88
+   }
+  },
+  {
+   "observed_on": "2024-12-03",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 29.3,
+    "humidity_pct": 61.0,
+    "solar_mj_m2": 14.46
+   }
+  },
+  {
+   "observed_on": "2024-12-09",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 30.1,
+    "humidity_pct": 78.0,
+    "solar_mj_m2": 15.73
+   }
+  },
+  {
+   "observed_on": "2024-12-15",
+   "station": {
+    "id": "JED-01",
+    "name": "King Abdulaziz Intl"
+   },
+   "readings": {
+    "temp_max_c": 33.2,
+    "humidity_pct": 42.0,
+    "solar_mj_m2": 15.26
+   }
+  }
+ ]
+}

@@ -28,6 +28,11 @@
 **/*grades*
 **/*marks*
 
+# Instructor-only teaching material — answer keys, delivery plans,
+# suggested exercise answers. Applies to all weeks and all labs.
+**/*INSTRUCTOR*
+**/*instructor*
+
 # Student data and submissions
 **/submissions/
 **/Submissions/
@@ -45,6 +50,13 @@
 
 # Source PowerPoints — large working files (published lecture is the HTML)
 03_Lectures/**/*.pptx
+
+# Dataset generators and raw sources — instructor-only.
+# The generator reveals how synthetic teaching data is built; the raw
+# source is the unprocessed API dump. Students get the prepared files only.
+09_Datasets/**/_build_data.py
+09_Datasets/**/_source_*
+09_Datasets/**/_clean_reference*
 
 # Scaffold placeholders — noise, not content
 **/_PLACEHOLDER.md
