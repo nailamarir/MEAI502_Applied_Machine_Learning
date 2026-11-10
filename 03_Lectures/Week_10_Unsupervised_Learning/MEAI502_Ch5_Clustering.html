@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEAI502 · Ch 5 · Clustering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=STIX+Two+Text:wght@400;500;600;700&family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --ink:#0b0b0f; --muted:#4b5563; --line:#e2e5ea; --card:#f8fafc;
+  --blue:#1d4ed8; --blue-soft:#e6edff; --red:#dc2626; --red-soft:#fee6e6;
+  --green:#16a34a; --green-soft:#e3f6ea; --orange:#f59e0b; --orange-soft:#fff4dc;
+  --purple:#7c3aed; --purple-soft:#efe7ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#fff;overflow:hidden;font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink)}
+.stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;background:var(--bg);box-shadow:0 0 0 1px #eceef2;overflow:hidden}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:34px 64px 60px}
+.slide.active{display:flex;animation:fade .5s cubic-bezier(.2,.7,.2,1)}
+@keyframes fade{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(1.25);opacity:0}70%{transform:scale(.97)}100%{transform:scale(1);opacity:1}}
+@keyframes draw{to{stroke-dashoffset:0}}
+.slide.active .rise{animation:rise .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,0s)}
+.kicker{font-size:18px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+h2{font-family:"STIX Two Text",Georgia,serif;font-weight:600;font-size:54px;line-height:1.08;letter-spacing:-.01em;margin:2px 0 18px;color:var(--ink)}
+p,li{font-size:27px;line-height:1.42}
+.muted{color:var(--muted)}
+b,strong{font-weight:800}
+.blue{color:var(--blue)} .red{color:var(--red)} .green{color:var(--green)} .orange{color:#d97706} .purple{color:var(--purple)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:30px;flex:1;min-height:0}
+.cols.l6{grid-template-columns:1.25fr 1fr}
+.cols.r6{grid-template-columns:1fr 1.25fr}
+.stack{display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border:2px solid var(--line);border-radius:16px;padding:16px 22px}
+.card.b{border-color:var(--blue);background:var(--blue-soft)}
+.card.r{border-color:var(--red);background:var(--red-soft)}
+.card.g{border-color:var(--green);background:var(--green-soft)}
+.card.o{border-color:var(--orange);background:var(--orange-soft)}
+.card.p{border-color:var(--purple);background:var(--purple-soft)}
+.card h3{font-size:27px;font-weight:800;margin-bottom:4px}
+.card p,.card li{font-size:25px}
+.eq{font-size:28px;line-height:1.6}
+.eq .katex-display{margin:.25em 0}
+.katex{font-size:1.08em}
+ul.dots{list-style:none;display:flex;flex-direction:column;gap:10px}
+ul.dots li{position:relative;padding-left:30px}
+ul.dots li::before{content:"";position:absolute;left:4px;top:.55em;width:12px;height:12px;border-radius:50%;background:var(--blue)}
+.frag{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}
+.frag.shown{opacity:1;transform:none}
+svg .frag{transform:none!important}
+.hw{font-family:Caveat,cursive;font-weight:700;font-size:34px;color:var(--blue);line-height:1.1}
+.hw.r{color:var(--red)} .hw.g{color:var(--green)} .hw.o{color:#d97706} .hw.p{color:var(--purple)}
+.hw.frag{opacity:1;transform:none;clip-path:inset(0 100% 0 0);transition:clip-path 1.1s ease}
+.hw.frag.shown{clip-path:inset(0 0 0 0)}
+.frag.drawp{opacity:1;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.1s ease}
+.frag.drawp.shown{stroke-dashoffset:0}
+.frag.popin{transform:scale(.6)} .frag.popin.shown{transform:none;transition:opacity .35s,transform .45s cubic-bezier(.3,1.6,.5,1)}
+.callout{border-left:6px solid var(--blue);background:var(--blue-soft);padding:12px 20px;border-radius:0 12px 12px 0;font-size:26px}
+.callout.r{border-color:var(--red);background:var(--red-soft)}
+.callout.g{border-color:var(--green);background:var(--green-soft)}
+.callout.o{border-color:var(--orange);background:var(--orange-soft)}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:17px;font-weight:800;letter-spacing:.04em}
+.pill.b{background:var(--blue-soft);color:var(--blue)} .pill.r{background:var(--red-soft);color:var(--red)} .pill.g{background:var(--green-soft);color:var(--green)}
+/* widgets */
+.ix{position:relative}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px 18px}
+.lab{font-size:21px;font-weight:700;display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.lab span.v{font-family:"JetBrains Mono",monospace;color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--blue);height:30px;cursor:pointer}
+.btn{font:700 18px "Plus Jakarta Sans",sans-serif;padding:9px 16px;border-radius:10px;border:2px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer;transition:transform .12s,background .2s}
+.btn:hover{background:var(--blue-soft)} .btn:active{transform:scale(.96)}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.on{background:var(--blue);color:#fff}
+.btn.r{border-color:var(--red);color:var(--red)} .btn.r.on{background:var(--red);color:#fff}
+.btn.g{border-color:var(--green);color:var(--green)} .btn.g.on{background:var(--green);color:#fff}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.read{font-family:"JetBrains Mono",monospace;font-size:21px;line-height:1.55}
+.big{font-size:46px;font-weight:800;font-family:"JetBrains Mono",monospace}
+.code{font-family:"JetBrains Mono",monospace;font-size:18.5px;line-height:1.6;background:#0f172a;color:#e2e8f0;border-radius:14px;padding:18px 22px;white-space:pre}
+.code .c{color:#94a3b8} .code .k{color:#93c5fd} .code .s{color:#86efac} .code .f{color:#fcd34d}
+svg text{font-family:"Plus Jakarta Sans",sans-serif}
+.grid{stroke:#eef0f3;stroke-width:1}
+.axis{stroke:#111;stroke-width:2;fill:none}
+.tick{font-size:16px;fill:#4b5563}
+.alab{font-size:19px;font-weight:700;fill:#111}
+.ox{fill:#fff;stroke:var(--blue);stroke-width:3}
+.xx line{stroke:var(--red);stroke-width:3.6;stroke-linecap:round}
+.tri{fill:#fff;stroke:var(--green);stroke-width:3;stroke-linejoin:round}
+.sq{fill:#fff;stroke:var(--blue);stroke-width:3}
+.dim,.dim line{stroke:#c3c8d0!important}
+.curve{fill:none;stroke:var(--red);stroke-width:4;stroke-linecap:round}
+.fit{stroke:var(--purple);stroke-width:4;stroke-linecap:round}
+.thr{stroke:var(--orange);stroke-width:3;stroke-dasharray:9 7}
+.bnd{stroke:var(--green);stroke-width:4;stroke-linecap:round;fill:none}
+.svgw{width:100%;height:auto;display:block}
+.hwt{font-family:Caveat,cursive;font-weight:700;font-size:30px}
+/* quiz */
+.mcq button,.qopt{font:600 22px "Plus Jakarta Sans",sans-serif;text-align:left;padding:10px 16px;border-radius:12px;border:2px solid var(--line);background:#fff;cursor:pointer;transition:all .2s}
+.mcq button:hover,.qopt:hover{border-color:var(--blue)}
+.mcq button.right,.qopt.right{border-color:var(--green);background:var(--green-soft)}
+.mcq button.wrong,.qopt.wrong{border-color:var(--red);background:var(--red-soft)}
+.why{display:none;font-size:21px;margin-top:6px;color:var(--green);font-weight:700}
+.why.show{display:block;animation:rise .4s both}
+/* title + sections */
+.slide.title{flex-direction:row;align-items:center;padding:60px 70px}
+.ttl{font-family:"STIX Two Text",Georgia,serif;font-weight:600;font-size:96px;line-height:.98;margin:14px 0 14px;letter-spacing:-.015em}
+.tsub{font-size:30px;color:var(--muted);font-weight:500}
+.tbar{width:220px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--red));margin:30px 0 24px}
+.who{font-size:21px;line-height:1.5;color:var(--muted)} .who b{color:var(--ink);font-size:25px}
+.slide.sec{justify-content:center}
+.secwrap{display:flex;align-items:center;gap:40px}
+.secnum{font-family:"STIX Two Text",serif;font-size:200px;font-weight:700;color:var(--blue);line-height:1}
+.secbar{width:12px;height:210px;border-radius:6px;background:linear-gradient(180deg,var(--blue),var(--red))}
+.sectitle{font-family:"STIX Two Text",serif;font-size:78px;font-weight:600;line-height:1.02;margin:8px 0 12px}
+.secsub{font-size:27px;color:var(--muted)}
+/* footer/nav */
+.foot{position:absolute;left:64px;right:64px;bottom:16px;display:flex;justify-content:space-between;font-size:15px;color:#6b7280;font-weight:600;pointer-events:none}
+.prog{position:absolute;left:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--blue),var(--red));transition:width .4s}
+.navzone{position:fixed;right:0;bottom:0;width:340px;height:110px;z-index:9}
+.navui{position:fixed;right:18px;bottom:14px;display:flex;gap:8px;align-items:center;z-index:10;opacity:.9}
+.navzone:hover+.navui,.navui:hover{opacity:1}
+.navui button{font:700 18px "Plus Jakarta Sans";width:46px;height:42px;border-radius:10px;border:2px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+.navui .cnt{font:700 16px "JetBrains Mono";color:var(--muted);padding:0 6px;background:#fff;border-radius:8px}
+.hint{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#0b0b0f;color:#fff;font-size:15px;padding:8px 16px;border-radius:999px;opacity:.85;z-index:11;transition:opacity .6s}
+.pbar{display:flex;height:64px;border-radius:14px;overflow:hidden;border:2px solid var(--line);font:800 21px "JetBrains Mono";color:#fff}
+.pbar div{display:flex;align-items:center;justify-content:center;transition:width .25s;white-space:nowrap;overflow:hidden}
+.p1{background:var(--red)} .p0{background:var(--blue)}
+.obar{display:flex;align-items:center;gap:10px;font:700 19px "JetBrains Mono";margin:6px 0}
+.obar .tr{flex:1;height:26px;background:#eef0f3;border-radius:8px;overflow:hidden}
+.obar .fl{height:100%;border-radius:8px;transition:width .3s}
+.obar.max{outline:3px solid var(--orange);outline-offset:3px;border-radius:8px}
+table.t{border-collapse:collapse;font-size:22px}
+table.t td,table.t th{border-bottom:2px solid var(--line);padding:8px 14px;text-align:left}
+table.t th{font-size:17px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.navui button{width:auto;padding:0 14px}
+.mcq button.sel{border-color:var(--blue);background:var(--blue-soft)}
+.mcq .chk{align-self:flex-start;margin-top:4px}
+.mcq .why.no{color:var(--red)}
+.mat{font-family:"JetBrains Mono",monospace}
+.tag{font:800 15px "Plus Jakarta Sans";letter-spacing:.06em;text-transform:uppercase;padding:2px 10px;border-radius:999px;color:#fff}
+.opt{border:2px dashed #c3c8d0;border-radius:16px;padding:14px 20px}
+.mini{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mini .qopt{padding:6px}
+
+.q1 button{font-size:20px;padding:7px 14px}
+#fnum{display:none}
+.fitw{display:flex;flex-direction:column;flex:0 0 auto}
+.fitw > .cols, .fitw > div{flex:0 0 auto}
+ol.nums{padding-left:32px;display:flex;flex-direction:column;gap:8px} ol.nums li::marker{font-weight:800;color:var(--blue)}
+
+.measuring .why{display:block!important}
+.mcq button.right{border-color:var(--green)!important;background:var(--green-soft)!important}
+.mcq button.wrong{border-color:var(--red)!important;background:var(--red-soft)!important}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#111"/></marker>
+<marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/></marker>
+<marker id="arrR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+</defs></svg>
+
+<div class="stage" id="stage">
+<!-- 1 TITLE -->
+<section class="slide title" data-title="Title">
+  <div style="flex:1">
+    <div class="kicker rise">MEAI502 · Applied Machine Learning · Chapter 5</div>
+    <h1 class="ttl rise" style="--d:.1s">Clustering</h1>
+    <div class="tsub rise" style="--d:.2s">K-means: finding structure in unlabeled data</div>
+    <div class="tbar rise" style="--d:.3s"></div>
+    <div class="who rise" style="--d:.4s"><b>Dr. Naila Marir</b><br>Effat College of Engineering</div>
+  </div>
+  <svg id="titleSvg" style="width:520px;height:440px" viewBox="0 0 520 440"></svg>
+</section>
+
+<!-- 2 ROADMAP -->
+<section class="slide" data-title="Roadmap">
+  <div class="kicker">Today</div>
+  <h2>Chapter roadmap</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="card b frag"><div class="pill b">01</div><h3 style="margin-top:8px">Unsupervised learning</h3><p>Learning from unlabeled data; what clustering is for</p></div>
+    <div class="card r frag"><div class="pill r">02</div><h3 style="margin-top:8px">The K-means algorithm</h3><p>Cluster assignment and move centroid steps</p></div>
+    <div class="card g frag"><div class="pill g">03</div><h3 style="margin-top:8px">Optimization objective</h3><p>The distortion cost function J</p></div>
+    <div class="card o frag"><div class="pill" style="background:#fff;color:#d97706">04</div><h3 style="margin-top:8px">Random initialization</h3><p>Local optima and multiple random starts</p></div>
+    <div class="card p frag" style="grid-column:1 / span 2"><div class="pill" style="background:#fff;color:#7c3aed">05</div><h3 style="margin-top:8px">Choosing the number of clusters K</h3><p>The elbow method, and choosing K for a downstream purpose</p></div>
+  </div>
+</section>
+
+<!-- 3 SECTION 1 -->
+<section class="slide sec" data-title="Part 1">
+  <div class="secwrap"><div class="secnum rise">01</div><div class="secbar rise" style="--d:.1s"></div>
+  <div class="rise" style="--d:.2s"><div class="kicker">Part 1</div><h1 class="sectitle">Unsupervised<br>Learning</h1><p class="secsub">Learning from data without labels</p></div></div>
+</section>
+
+<!-- 4 SUPERVISED VS UNSUPERVISED -->
+<section class="slide" data-title="Supervised vs unsupervised">
+  <div class="kicker">Part 1 · Unsupervised learning</div>
+  <h2>Supervised vs unsupervised learning</h2>
+  <div class="cols">
+    <div class="stack" style="gap:8px">
+      <h3 class="blue" style="font-size:28px">Supervised</h3>
+      <svg id="supSvg" class="svgw"></svg>
+      <div class="eq" style="font-size:22px">\(\{(x^{(1)},y^{(1)}),(x^{(2)},y^{(2)}),\dots,(x^{(m)},y^{(m)})\}\)</div>
+      <p style="font-size:23px">Labels are given. Goal: fit a hypothesis, such as a decision boundary.</p>
+    </div>
+    <div class="stack frag" style="gap:8px">
+      <h3 class="green" style="font-size:28px">Unsupervised</h3>
+      <svg id="unsSvg" class="svgw"></svg>
+      <div class="eq" style="font-size:22px">\(\{x^{(1)},x^{(2)},x^{(3)},\dots,x^{(m)}\}\)</div>
+      <p style="font-size:23px"><b>No labels</b> \(y\). Goal: ask the algorithm to <b>find some structure</b> in the data.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5 CLUSTERING -->
+<section class="slide" data-title="Clustering">
+  <div class="kicker">Part 1 · Clustering</div>
+  <h2>Clustering: one kind of structure</h2>
+  <div class="cols" style="grid-template-columns:1.2fr 1fr">
+    <div class="ix"><svg id="clSvg" class="svgw"></svg></div>
+    <div class="stack">
+      <p>Given unlabeled points, an algorithm might discover that they form <b>separate groups</b>.</p>
+      <div class="card g frag"><h3 class="green">Clustering algorithm</h3><p>Automatically groups the data into coherent subsets, called <b>clusters</b>.</p></div>
+      <div class="callout frag">Clustering is our first unsupervised learning algorithm. Other unsupervised methods find other kinds of structure.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 APPLICATIONS -->
+<section class="slide" data-title="Applications">
+  <div class="kicker">Part 1 · Why clustering?</div>
+  <h2>Applications of clustering</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="card b frag"><h3 class="blue">🛍️ Market segmentation</h3><p>Group a customer database into market segments, to sell to and serve each segment better.</p></div>
+    <div class="card r frag"><h3 class="red">👥 Social network analysis</h3><p>Find coherent groups of friends, for example from who emails whom most often.</p></div>
+    <div class="card g frag"><h3 class="green">🖥️ Organize computing clusters</h3><p>Find which machines in a data center work together, to lay out resources and the network better.</p></div>
+    <div class="card p frag"><h3 class="purple">🌌 Astronomical data analysis</h3><p>Group astronomical observations to help understand how galaxies form.</p></div>
+  </div>
+</section>
+
+<!-- 7 SECTION 2 -->
+<section class="slide sec" data-title="Part 2">
+  <div class="secwrap"><div class="secnum rise">02</div><div class="secbar rise" style="--d:.1s"></div>
+  <div class="rise" style="--d:.2s"><div class="kicker">Part 2</div><h1 class="sectitle">The K-means<br>Algorithm</h1><p class="secsub">By far the most widely used clustering algorithm</p></div></div>
+</section>
+
+<!-- 8 STEP DEMO -->
+<section class="slide" data-title="Try it: K-means">
+  <div class="kicker">Part 2 · Try it</div>
+  <h2>K-means in pictures</h2>
+  <div class="cols" style="grid-template-columns:1.25fr 1fr">
+    <div class="ix"><svg id="kmSvg" class="svgw"></svg></div>
+    <div class="stack ix">
+      <div class="panel">
+        <p style="font-size:20px">Goal: group the data into <b>K = 2</b> clusters. The crosses are the <b>cluster centroids</b>.</p>
+        <div class="btns" style="margin-top:8px"><button class="btn primary" id="kmNext">Next step</button><button class="btn" id="kmRun">Run to the end</button><button class="btn" id="kmReset">Reset</button></div>
+      </div>
+      <div class="panel read" id="kmRead"></div>
+      <div class="hw" id="kmHw" style="font-size:30px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 FORMAL ALGORITHM -->
+<section class="slide" data-title="The algorithm">
+  <div class="kicker">Part 2 · Formally</div>
+  <h2>The K-means algorithm</h2>
+  <div class="cols" style="grid-template-columns:1fr 1.5fr">
+    <div class="stack">
+      <div class="card"><h3>Input</h3>
+        <ul class="dots" style="margin-top:6px"><li>\(K\): the number of clusters</li><li>Training set \(\{x^{(1)},\dots,x^{(m)}\}\)</li><li>\(x^{(i)}\in\mathbb{R}^n\) <span class="muted">(no \(x_0=1\) convention)</span></li></ul></div>
+      <div class="callout o frag"><b>K</b> (capital) = number of clusters.<br><b>k</b> (lowercase) = index of one cluster, from 1 to K.</div>
+    </div>
+    <div class="card" style="font-size:24px">
+      <p>Randomly initialize \(K\) cluster centroids \(\mu_1,\mu_2,\dots,\mu_K\in\mathbb{R}^n\)</p>
+      <p style="margin-top:8px"><b>Repeat</b> {</p>
+      <div class="frag" style="padding-left:30px;border-left:4px solid var(--blue);margin:6px 0">
+        <p><b>for</b> \(i=1\) to \(m\):</p>
+        <p style="padding-left:30px">\(c^{(i)}:=\) index (1 to K) of the centroid closest to \(x^{(i)}\)</p>
+        <div class="eq" style="font-size:24px;padding-left:30px">\(c^{(i)}=\arg\min_k \lVert x^{(i)}-\mu_k\rVert^2\)</div>
+        <p class="blue" style="font-size:20px"><b>cluster assignment step</b></p></div>
+      <div class="frag" style="padding-left:30px;border-left:4px solid var(--red);margin:6px 0">
+        <p><b>for</b> \(k=1\) to \(K\):</p>
+        <p style="padding-left:30px">\(\mu_k:=\) average (mean) of the points assigned to cluster \(k\)</p>
+        <p class="red" style="font-size:20px"><b>move centroid step</b></p></div>
+      <p>}</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 WORKED EXAMPLE -->
+<section class="slide" data-title="Worked example">
+  <div class="kicker">Part 2 · Move centroid step</div>
+  <h2>A worked example</h2>
+  <div class="cols">
+    <div class="stack">
+      <p>Suppose examples 1, 5, 6 and 10 were assigned to cluster 2:</p>
+      <div class="eq" style="font-size:26px">\[c^{(1)}=c^{(5)}=c^{(6)}=c^{(10)}=2\]</div>
+      <div class="card r frag"><p>Then the move centroid step sets:</p>
+        <div class="eq" style="font-size:28px">\[\mu_2=\tfrac{1}{4}\big[x^{(1)}+x^{(5)}+x^{(6)}+x^{(10)}\big]\in\mathbb{R}^n\]</div></div>
+      <div class="card frag"><p>With numbers: \(x^{(1)}=(1,2),\ x^{(5)}=(2,1),\ x^{(6)}=(3,3),\ x^{(10)}=(2,2)\)</p>
+        <p style="margin-top:4px">\(\mu_2=\tfrac14(8,\,8)=\mathbf{(2,\,2)}\)</p></div>
+    </div>
+    <div class="stack">
+      <div class="card o frag"><h3 class="orange">What if a cluster gets no points?</h3>
+        <ul class="dots" style="margin-top:6px"><li><b>Most common:</b> eliminate that centroid, leaving \(K-1\) clusters.</li><li>If you really need \(K\) clusters: randomly re-initialize that centroid.</li></ul>
+        <p class="muted" style="margin-top:8px;font-size:22px">In practice this does not happen often.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 T-SHIRT -->
+<section class="slide" data-title="Non-separated clusters">
+  <div class="kicker">Part 2 · Non-separated clusters</div>
+  <h2>K-means also works without clear groups</h2>
+  <div class="cols" style="grid-template-columns:1.2fr 1fr">
+    <div class="ix"><svg id="tsSvg" class="svgw"></svg></div>
+    <div class="stack ix">
+      <p style="font-size:24px">A T-shirt maker measures the <b>height</b> and <b>weight</b> of customers. The data has no separate groups.</p>
+      <div class="callout g">With <b>K = 3</b>, K-means still splits customers into segments <b>S, M, L</b>, and we design one size per segment: <b>market segmentation</b>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 SECTION 3 -->
+<section class="slide sec" data-title="Part 3">
+  <div class="secwrap"><div class="secnum rise">03</div><div class="secbar rise" style="--d:.1s"></div>
+  <div class="rise" style="--d:.2s"><div class="kicker">Part 3</div><h1 class="sectitle">Optimization<br>Objective</h1><p class="secsub">What K-means is minimizing</p></div></div>
+</section>
+
+<!-- 14 NOTATION -->
+<section class="slide" data-title="Notation">
+  <div class="kicker">Part 3 · Notation</div>
+  <h2>One new piece of notation</h2>
+  <p class="muted" style="font-size:24px">Reminder: \(c^{(i)}\) = index of the cluster \(x^{(i)}\) is assigned to; \(\mu_k\) = location of centroid \(k\).</p>
+  <div class="card g frag" style="margin-top:10px"><div class="eq" style="font-size:40px">\(\mu_{c^{(i)}}\)</div><p>the centroid of the cluster to which \(x^{(i)}\) <b>has been assigned</b></p></div>
+  <div class="callout frag" style="margin-top:18px">Example: \(x^{(i)}\) is assigned to cluster 5 \(\Rightarrow\ c^{(i)}=5\ \Rightarrow\ \mu_{c^{(i)}}=\mu_5\)</div>
+</section>
+
+<!-- 15 DISTORTION -->
+<section class="slide" data-title="Distortion">
+  <div class="kicker">Part 3 · Cost function</div>
+  <h2>The distortion cost function</h2>
+  <div class="card"><div class="eq" style="font-size:28px">\[J\big(c^{(1)},\dots,c^{(m)},\mu_1,\dots,\mu_K\big)=\frac{1}{m}\sum_{i=1}^{m}{\color{#dc2626}\big\lVert x^{(i)}-\mu_{c^{(i)}}\big\rVert^2}\qquad \min_{c,\ \mu}\ J\]</div></div>
+  <div class="cols" style="grid-template-columns:1fr 1fr;margin-top:10px">
+    <div class="stack">
+      <p class="frag">The average <b class="red">squared distance</b> between each example and the centroid of the cluster it is assigned to. Also called the <b>distortion</b>.</p>
+    </div>
+    <div class="frag"><svg id="disSvg" class="svgw"></svg></div>
+  </div>
+</section>
+
+<!-- 16 STEPS MINIMIZE J -->
+<section class="slide" data-title="Steps minimize J">
+  <div class="kicker">Part 3 · Why the two steps work</div>
+  <h2>Each step minimizes J</h2>
+  <div class="cols" style="grid-template-columns:1fr 1fr">
+    <div class="stack">
+      <div class="card b frag"><h3 class="blue">Cluster assignment step</h3><p>Minimizes \(J\) with respect to \(c^{(1)},\dots,c^{(m)}\), holding \(\mu_1,\dots,\mu_K\) <b>fixed</b>.</p></div>
+      <div class="card r frag"><h3 class="red">Move centroid step</h3><p>Minimizes \(J\) with respect to \(\mu_1,\dots,\mu_K\), holding the \(c^{(i)}\) <b>fixed</b>.</p></div>
+      <div class="callout g frag"><b>Debugging:</b> J must <b>never increase</b> from one step to the next. If it does, there is a bug in your code.</div>
+    </div>
+    <div class="stack frag"><svg id="jSvg" class="svgw"></svg><p class="muted" style="font-size:20px;text-align:center">J after each step of the demo on slide 8</p></div>
+  </div>
+</section>
+
+<!-- 17 SECTION 4 -->
+<section class="slide sec" data-title="Part 4">
+  <div class="secwrap"><div class="secnum rise">04</div><div class="secbar rise" style="--d:.1s"></div>
+  <div class="rise" style="--d:.2s"><div class="kicker">Part 4</div><h1 class="sectitle">Random<br>Initialization</h1><p class="secsub">How to start, and how to avoid local optima</p></div></div>
+</section>
+
+<!-- 18 INIT METHOD -->
+<section class="slide" data-title="Initialization">
+  <div class="kicker">Part 4 · The recommended way</div>
+  <h2>Initialize on random training examples</h2>
+  <div class="cols" style="grid-template-columns:1fr 1.15fr">
+    <div class="stack">
+      <div class="card"><ol class="nums" style="font-size:25px"><li>Make sure \(K \lt m\) (fewer clusters than examples).</li><li>Randomly pick \(K\) training examples.</li><li>Set \(\mu_1,\dots,\mu_K\) equal to these \(K\) examples.</li></ol></div>
+      <div class="eq frag" style="font-size:24px">\(\mu_1=x^{(i)},\ \ \mu_2=x^{(j)},\ \dots\) for random \(i\neq j\)</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="frag">
+      <div class="stack" style="gap:4px"><svg id="in1Svg" class="svgw"></svg><p style="text-align:center;font-size:20px" class="green"><b>lucky pick</b></p></div>
+      <div class="stack" style="gap:4px"><svg id="in2Svg" class="svgw"></svg><p style="text-align:center;font-size:20px" class="red"><b>unlucky pick</b></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 LOCAL OPTIMA -->
+<section class="slide" data-title="Try it: local optima">
+  <div class="kicker">Part 4 · Try it</div>
+  <h2>K-means can get stuck in local optima</h2>
+  <div class="cols" style="grid-template-columns:1.2fr 1fr">
+    <div class="ix"><svg id="loSvg" class="svgw"></svg></div>
+    <div class="stack ix">
+      <div class="panel"><p style="font-size:20px">K = 3. Each click picks 3 random examples as starting centroids, then runs K-means to convergence.</p>
+        <div class="btns" style="margin-top:8px"><button class="btn primary" id="loBtn">New random initialization</button></div></div>
+      <div class="panel read" id="loRead"></div>
+      <div class="hw" id="loHw" style="font-size:30px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 20 MULTIPLE INITS -->
+<section class="slide" data-title="Multiple initializations">
+  <div class="kicker">Part 4 · The fix</div>
+  <h2>Multiple random initializations</h2>
+  <div class="cols" style="grid-template-columns:1fr 1.05fr">
+    <div class="stack">
+      <div class="card" style="font-size:23px">
+        <p><b>For</b> \(i=1\) to \(100\) {</p>
+        <p style="padding-left:30px">Randomly initialize K-means</p>
+        <p style="padding-left:30px">Run K-means → get \(c^{(1)},\dots,c^{(m)},\mu_1,\dots,\mu_K\)</p>
+        <p style="padding-left:30px">Compute the cost function (distortion) \(J\)</p>
+        <p>}</p>
+        <p style="margin-top:6px"><b>Pick the clustering with the lowest \(J\).</b></p>
+      </div>
+      <p class="muted" style="font-size:21px">Typical number of runs: 50 to 1000.</p>
+      <div class="callout g frag">Helps most when \(K\) is small (2 to about 10). For large \(K\) (hundreds), the first run is usually already decent.</div>
+    </div>
+    <div class="stack ix">
+      <button class="btn primary" id="miBtn" style="align-self:flex-start">Run 100 initializations</button>
+      <svg id="miSvg" class="svgw"></svg>
+      <div class="read" id="miRead" style="font-size:20px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 21 SECTION 5 -->
+<section class="slide sec" data-title="Part 5">
+  <div class="secwrap"><div class="secnum rise">05</div><div class="secbar rise" style="--d:.1s"></div>
+  <div class="rise" style="--d:.2s"><div class="kicker">Part 5</div><h1 class="sectitle">Choosing the<br>Number of Clusters</h1><p class="secsub">How to pick K</p></div></div>
+</section>
+
+<!-- 22 AMBIGUOUS -->
+<section class="slide" data-title="How many clusters?">
+  <div class="kicker">Part 5 · The problem</div>
+  <h2>How many clusters do you see?</h2>
+  <div class="cols" style="grid-template-columns:1.2fr 1fr">
+    <div class="ix"><svg id="amSvg" class="svgw"></svg></div>
+    <div class="stack ix">
+      <div class="panel"><div class="btns" id="amBtns"><button class="btn" data-k="2">K = 2</button><button class="btn" data-k="3">K = 3</button><button class="btn on" data-k="4">K = 4</button></div></div>
+      <p>Some people see 2 clusters, some 3, some 4. The true number is <b>genuinely ambiguous</b>.</p>
+      <div class="callout o">With no labels, there is often no single right answer. In practice, K is still most often chosen <b>by hand</b>, by looking at the data and the results.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 23 ELBOW -->
+<section class="slide" data-title="Elbow method">
+  <div class="kicker">Part 5 · The elbow method</div>
+  <h2>The elbow method</h2>
+  <p style="font-size:24px">Run K-means for K = 1, 2, 3, …, compute the distortion J for each, and plot J against K.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:6px">
+    <div class="stack" style="gap:6px"><svg id="el1Svg" class="svgw"></svg><p class="green" style="text-align:center;font-size:22px"><b>Clear elbow at K = 3:</b> J drops fast, then slowly</p></div>
+    <div class="stack frag" style="gap:6px"><svg id="el2Svg" class="svgw"></svg><p class="red" style="text-align:center;font-size:22px"><b>No clear elbow:</b> 3? 4? 5?</p></div>
+  </div>
+  <div class="callout o frag" style="margin-top:10px">Worth a try, but don't expect it to work for every problem: an ambiguous curve is just as common.</div>
+</section>
+
+<!-- 24 DOWNSTREAM -->
+<section class="slide" data-title="Downstream purpose">
+  <div class="kicker">Part 5 · A better way</div>
+  <h2>Choose K for the later purpose</h2>
+  <p style="font-size:24px">We usually run K-means for a <b>downstream purpose</b>. Ask: which K serves that purpose best?</p>
+  <div class="cols" style="margin-top:8px">
+    <div class="stack" style="gap:6px"><svg id="ds3Svg" class="svgw"></svg><p style="text-align:center;font-size:22px"><b>K = 3:</b> S, M, L</p></div>
+    <div class="stack frag" style="gap:6px"><svg id="ds5Svg" class="svgw"></svg><p style="text-align:center;font-size:22px"><b>K = 5:</b> XS, S, M, L, XL</p></div>
+  </div>
+  <div class="cols frag" style="margin-top:10px;flex:0 0 auto;align-items:start">
+    <div class="callout g">More sizes: T-shirts <b>fit customers better</b>.</div>
+    <div class="callout o">Fewer sizes: <b>cheaper</b> to make and sell.</div>
+  </div>
+</section>
+
+<!-- 25 CODE -->
+<section class="slide" data-title="Code">
+  <div class="kicker">In Python</div>
+  <h2>K-means in NumPy</h2>
+  <div class="cols" style="grid-template-columns:1.6fr 1fr">
+<div class="code"><span class="k">def</span> <span class="f">find_closest_centroids</span>(X, mu):
+    d = ((X[:, <span class="k">None</span>, :] - mu[<span class="k">None</span>, :, :]) ** <span class="s">2</span>).<span class="f">sum</span>(axis=<span class="s">2</span>)
+    <span class="k">return</span> d.<span class="f">argmin</span>(axis=<span class="s">1</span>)          <span class="c"># c(i) for every example</span>
+
+<span class="k">def</span> <span class="f">compute_centroids</span>(X, c, K):
+    <span class="k">return</span> np.<span class="f">array</span>([X[c == k].<span class="f">mean</span>(axis=<span class="s">0</span>) <span class="k">for</span> k <span class="k">in</span> <span class="f">range</span>(K)])
+
+<span class="k">def</span> <span class="f">kmeans</span>(X, K, iters=<span class="s">10</span>):
+    mu = X[np.random.<span class="f">choice</span>(<span class="f">len</span>(X), K, replace=<span class="k">False</span>)]  <span class="c"># random init</span>
+    <span class="k">for</span> _ <span class="k">in</span> <span class="f">range</span>(iters):
+        c = <span class="f">find_closest_centroids</span>(X, mu)   <span class="c"># assignment step</span>
+        mu = <span class="f">compute_centroids</span>(X, c, K)    <span class="c"># move centroid step</span>
+    J = ((X - mu[c]) ** <span class="s">2</span>).<span class="f">sum</span>(axis=<span class="s">1</span>).<span class="f">mean</span>()  <span class="c"># distortion</span>
+    <span class="k">return</span> c, mu, J</div>
+    <div class="stack">
+      <div class="card b"><h3 class="blue">Indexing</h3><p>Python numbers clusters 0 to K−1 (on the slides: 1 to K).</p></div>
+      <div class="card g"><h3 class="green">scikit-learn</h3><p><span class="mat">KMeans(n_clusters=K, init="random", n_init=100)</span></p><p style="margin-top:6px"><span class="mat">inertia_</span> is the sum of squared distances, which equals \(m\cdot J\).</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 26 SUMMARY -->
+<section class="slide" data-title="Summary">
+  <div class="kicker">Wrap-up</div>
+  <h2>Key takeaways</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card b frag"><p><b class="blue">1.</b> Unsupervised learning: data \(x^{(i)}\) with <b>no labels</b>; find structure such as clusters.</p></div>
+    <div class="card r frag"><p><b class="red">2.</b> K-means repeats: <b>assign</b> each point to the closest centroid, then <b>move</b> each centroid to the mean of its points.</p></div>
+    <div class="card g frag"><p><b class="green">3.</b> It minimizes the distortion \(J=\frac1m\sum\lVert x^{(i)}-\mu_{c^{(i)}}\rVert^2\); J never increases.</p></div>
+    <div class="card o frag"><p><b class="orange">4.</b> Initialize centroids on \(K\) random examples. Run many times and keep the <b>lowest J</b>.</p></div>
+    <div class="card p frag" style="grid-column:1 / span 2"><p><b class="purple">5.</b> Choose K by hand, with the elbow method if it shows a clear elbow, or better, by what serves the <b>downstream purpose</b>.</p></div>
+  </div>
+</section>
+
+<!-- 27 QUIZ A -->
+<section class="slide" data-title="Quiz 1">
+  <div class="kicker">Check your understanding · 1 / 2</div>
+  <h2>Quiz</h2>
+  <div class="cols" style="grid-template-columns:1.2fr 1fr">
+    <div class="mcq stack ix multi" style="gap:8px"><p style="font-size:22px"><b>Q1.</b> Which of these are clustering (unsupervised) problems? <span class="muted">Check all that apply.</span></p>
+      <button data-ok="1">Group 50,000 customers into market segments from their purchase history.</button>
+      <button>Predict tomorrow's electricity demand from past demand.</button>
+      <button data-ok="1">Group news articles by topic, with no topic labels given.</button>
+      <button>Classify emails as spam or not spam using labeled emails.</button>
+      <button class="btn primary chk">Check</button>
+      <div class="why">The 1st and 3rd have no labels. Predicting demand is regression and spam filtering is classification: both are supervised.</div></div>
+    <div class="stack" style="gap:14px">
+      <div class="mcq stack ix" style="gap:8px"><p style="font-size:22px"><b>Q2.</b> The squared distances from \(x^{(i)}\) to \(\mu_1,\mu_2,\mu_3\) are 5, 2 and 7. What is \(c^{(i)}\)?</p>
+        <div class="btns"><button class="qopt" style="flex:1">1</button><button class="qopt" data-ok="1" style="flex:1">2</button><button class="qopt" style="flex:1">3</button></div>
+        <div class="why">Correct: \(c^{(i)}\) is the index of the closest centroid, \(\mu_2\).</div></div>
+      <div class="mcq stack ix" style="gap:8px"><p style="font-size:22px"><b>Q3.</b> Cluster 1 holds \((1,1)\), \((3,1)\), \((2,4)\). Where does \(\mu_1\) move?</p>
+        <div class="btns"><button class="qopt" style="flex:1">(2, 1)</button><button class="qopt" data-ok="1" style="flex:1">(2, 2)</button><button class="qopt" style="flex:1">(3, 3)</button></div>
+        <div class="why">Correct: the mean is \(\frac13(6,\,6)=(2,2)\).</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 28 QUIZ B -->
+<section class="slide" data-title="Quiz 2">
+  <div class="kicker">Check your understanding · 2 / 2</div>
+  <h2>Quiz</h2>
+  <div class="cols">
+    <div class="stack" style="gap:14px">
+      <div class="mcq stack ix" style="gap:8px"><p style="font-size:22px"><b>Q4.</b> While running K-means, the distortion J goes <b>up</b> after one iteration. What does this mean?</p>
+        <button>The learning rate is too large.</button>
+        <button data-ok="1">There is a bug in the implementation.</button>
+        <button>K-means found a local optimum.</button>
+        <div class="why">Correct: both steps minimize J, so J can never increase.</div></div>
+    </div>
+    <div class="stack" style="gap:14px">
+      <div class="mcq stack ix" style="gap:8px"><p style="font-size:22px"><b>Q5.</b> You ran K-means with 50 random initializations. Which clustering do you keep?</p>
+        <button>The one that converged fastest.</button>
+        <button data-ok="1">The one with the lowest distortion J.</button>
+        <button>The last one.</button>
+        <div class="why">Correct: lowest J means the best local (hopefully global) optimum.</div></div>
+      <div class="mcq stack ix" style="gap:8px"><p style="font-size:22px"><b>Q6.</b> Which is true about the elbow method?</p>
+        <button>It always gives the correct K.</button>
+        <button data-ok="1">The J-vs-K curve often has no clear elbow.</button>
+        <div class="why">Correct: it is worth a try, but often ambiguous.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 29 END -->
+<section class="slide sec" data-title="End">
+  <div class="secwrap"><div class="secbar rise"></div>
+  <div class="rise" style="--d:.1s"><div class="kicker">MEAI502 · Chapter 5</div><h1 class="sectitle">Thank you</h1><p class="secsub">Questions?</p><p class="muted" style="font-size:21px;margin-top:22px">Dr. Naila Marir · namarir@effatuniversity.edu.sa</p></div></div>
+</section>
+<div class="foot"><span>MEAI502 · Applied Machine Learning · Ch 5 Clustering</span><span id="fnum"></span></div>
+<div class="prog" id="prog"></div>
+</div>
+<div class="navui"><button id="bPrev" title="Previous (←)">‹ Back</button><span class="cnt" id="cnt"></span><button id="bNext" title="Next (→)">Next ›</button><button id="bFs" title="Fullscreen (F)">⛶</button></div>
+<div class="hint" id="hint">→ / Space / click: next step &nbsp;·&nbsp; ← / Back: previous slide &nbsp;·&nbsp; F: fullscreen</div>
+<script>
+
+const $=s=>document.querySelector(s);
+const NS='http://www.w3.org/2000/svg';
+let CID=0;
+function el(t,a,p){const e=document.createElementNS(NS,t);if(a)for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function txt(p,x,y,s,a){const t=el('text',Object.assign({x,y},a||{}),p);t.textContent=s;return t}
+function clear(g){while(g.firstChild)g.removeChild(g.firstChild)}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function gauss(r){let u=0;while(!u)u=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*r())}
+const sig=z=>1/(1+Math.exp(-z));
+const fx=(v,d=2)=>(Math.abs(v)<1e-9?0:v).toFixed(d);
+function svgPt(svg,e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+
+function axes(svg,o){
+  svg.setAttribute('viewBox',`0 0 ${o.W} ${o.H}`);
+  const pw=o.W-o.l-o.r, ph=o.H-o.t-o.b;
+  const sx=v=>o.l+(v-o.x[0])/(o.x[1]-o.x[0])*pw;
+  const sy=v=>o.t+ph-(v-o.y[0])/(o.y[1]-o.y[0])*ph;
+  const ix=p=>o.x[0]+(p-o.l)/pw*(o.x[1]-o.x[0]);
+  const iy=p=>o.y[0]+(o.t+ph-p)/ph*(o.y[1]-o.y[0]);
+  const id='cp'+(++CID);
+  const cp=el('clipPath',{id},svg); el('rect',{x:o.l,y:o.t,width:pw,height:ph},cp);
+  const g=el('g',{},svg);
+  (o.xt||[]).forEach((v,k)=>{if(o.grid!==false)el('line',{x1:sx(v),x2:sx(v),y1:o.t,y2:o.t+ph,class:'grid'},g);txt(g,sx(v),o.t+ph+24,o.xtl?o.xtl[k]:v,{class:'tick','text-anchor':'middle'})});
+  (o.yt||[]).forEach((v,k)=>{if(o.grid!==false)el('line',{x1:o.l,x2:o.l+pw,y1:sy(v),y2:sy(v),class:'grid'},g);txt(g,o.l-10,sy(v)+5,o.ytl?o.ytl[k]:v,{class:'tick','text-anchor':'end'})});
+  const layer=el('g',{'clip-path':`url(#${id})`},svg);
+  const bg=el('g',{},layer), dyn=el('g',{},layer);
+  const ag=el('g',{},svg);
+  el('line',{x1:o.l,y1:o.t+ph,x2:o.l+pw+12,y2:o.t+ph,class:'axis','marker-end':'url(#arr)'},ag);
+  el('line',{x1:o.l,y1:o.t+ph,x2:o.l,y2:o.t-12,class:'axis','marker-end':'url(#arr)'},ag);
+  if(o.xl)txt(ag,o.l+pw/2,o.H-6,o.xl,{class:'alab','text-anchor':'middle'});
+  if(o.yl){const yy=o.t+ph/2;txt(ag,18,yy,o.yl,{class:'alab','text-anchor':'middle',transform:`rotate(-90 18 ${yy})`})}
+  const top=el('g',{},svg);
+  return {o,sx,sy,ix,iy,pw,ph,bg,dyn,top,svg};
+}
+function mO(g,x,y,r=8,c='ox'){return el('circle',{cx:x,cy:y,r,class:c},g)}
+function mX(g,x,y,s=8,c='xx'){const q=el('g',{class:c},g);el('line',{x1:x-s,y1:y-s,x2:x+s,y2:y+s},q);el('line',{x1:x-s,y1:y+s,x2:x+s,y2:y-s},q);return q}
+function mT(g,x,y,s=10,c='tri'){return el('path',{d:`M${x},${y-s} L${x+s*.95},${y+s*.72} L${x-s*.95},${y+s*.72} Z`,class:c},g)}
+function mS(g,x,y,s=8,c='sq'){return el('rect',{x:x-s,y:y-s,width:2*s,height:2*s,class:c},g)}
+function shade(A,fn,col,N=150){
+  const c=document.createElement('canvas');c.width=N;c.height=N;const ctx=c.getContext('2d');const im=ctx.createImageData(N,N);const o=A.o;
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){const x=o.x[0]+(i+.5)/N*(o.x[1]-o.x[0]),y=o.y[1]-(j+.5)/N*(o.y[1]-o.y[0]);const k=(j*N+i)*4;const cc=col(fn(x,y));im.data[k]=cc[0];im.data[k+1]=cc[1];im.data[k+2]=cc[2];im.data[k+3]=255}
+  ctx.putImageData(im,0,0);
+  if(!A.img)A.img=el('image',{x:o.l,y:o.t,width:A.pw,height:A.ph,preserveAspectRatio:'none'},A.bg);
+  A.img.setAttribute('href',c.toDataURL());
+}
+function mix(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t]}
+const W3=[255,255,255], RS=[252,205,205], BS=[200,216,255], GS=[200,240,212];
+function probCol(p){const t=Math.min(1,Math.pow(Math.abs(p-.5)*2,.75));return p>=.5?mix(W3,RS,t):mix(W3,BS,t)}
+function lineInBox(A,a,b,c,cls){ // a + b*x + c*y = 0
+  const o=A.o;let p;
+  if(Math.abs(c)>1e-6){const y=x=>-(a+b*x)/c;p=[[o.x[0],y(o.x[0])],[o.x[1],y(o.x[1])]]}
+  else if(Math.abs(b)>1e-6){const x=-a/b;p=[[x,o.y[0]],[x,o.y[1]]]} else return null;
+  return el('line',{x1:A.sx(p[0][0]),y1:A.sy(p[0][1]),x2:A.sx(p[1][0]),y2:A.sy(p[1][1]),class:cls||'bnd'},A.dyn);
+}
+
+const MATHOPT={delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false};
+
+/* ---------- K-means helpers ---------- */
+const CC=['#1d4ed8','#dc2626','#16a34a','#f59e0b','#7c3aed'];
+const d2=(a,b)=>(a[0]-b[0])**2+(a[1]-b[1])**2;
+function blobs(seed,specs){const r=rng(seed),P=[];specs.forEach(([cx,cy,sx,sy,n])=>{for(let i=0;i<n;i++)P.push([cx+gauss(r)*sx,cy+gauss(r)*sy])});return P}
+function assign(P,mu){return P.map(p=>{let b=0,bd=1e18;mu.forEach((m,k)=>{const d=d2(p,m);if(d<bd){bd=d;b=k}});return b})}
+function moveC(P,c,mu){return mu.map((m,k)=>{const q=P.filter((_,i)=>c[i]===k);if(!q.length)return m;return [q.reduce((s,p)=>s+p[0],0)/q.length,q.reduce((s,p)=>s+p[1],0)/q.length]})}
+function cost(P,c,mu){return P.reduce((s,p,i)=>s+d2(p,mu[c[i]]),0)/P.length}
+function runKM(P,mu,max=100){let c=assign(P,mu);for(let t=0;t<max;t++){const m2=moveC(P,c,mu);const c2=assign(P,m2);mu=m2;if(c2.every((v,i)=>v===c[i])){c=c2;break}c=c2}return {c,mu,J:cost(P,c,mu)}}
+function randInit(P,K,r){const idx=new Set();while(idx.size<K)idx.add(Math.floor(r()*P.length));return [...idx].map(i=>P[i].slice())}
+function bestKM(P,K,n,seed){const r=rng(seed);let best=null;for(let t=0;t<n;t++){const R=runKM(P,randInit(P,K,r));if(!best||R.J<best.J)best=R}return best}
+function dot(g,x,y,col,r=6){return el('circle',{cx:x,cy:y,r,fill:col,'fill-opacity':.85,stroke:'#fff','stroke-width':1.2},g)}
+function cent(g,x,y,col,s=13){const q=el('g',{},g);[[-1,-1,1,1],[-1,1,1,-1]].forEach(([a,b,c,d])=>{el('line',{x1:x+a*s,y1:y+b*s,x2:x+c*s,y2:y+d*s,stroke:'#fff','stroke-width':9,'stroke-linecap':'round'},q);el('line',{x1:x+a*s,y1:y+b*s,x2:x+c*s,y2:y+d*s,stroke:col,'stroke-width':5,'stroke-linecap':'round'},q)});return q}
+function plain(svg,W,H,xr,yr,o={}){return axes(svg,Object.assign({W,H,l:30,r:12,t:12,b:30,x:xr,y:yr,xt:[],yt:[],grid:false},o))}
+function drawClusters(A,P,c,mu,r=6){clear(A.dyn);P.forEach((p,i)=>dot(A.dyn,A.sx(p[0]),A.sy(p[1]),c?CC[c[i]]:'#6b7280',r));if(mu)mu.forEach((m,k)=>cent(A.dyn,A.sx(m[0]),A.sy(m[1]),CC[k]))}
+
+/* data sets */
+const TWO=blobs(3,[[2.2,6.6,.75,.65,22],[6.4,3.0,.8,.7,22]]);
+const THREE=blobs(8,[[2,7,.55,.55,20],[3.2,2.4,.6,.55,20],[7.4,5.2,.6,.6,20]]);
+
+/* ---------- Title art ---------- */
+(function(){
+  const svg=$('#titleSvg');const A=plain(svg,520,440,[0,9.5],[0,9.5],{l:20,b:20});
+  const R=bestKM(THREE,3,10,1);
+  THREE.forEach((p,i)=>{const d=dot(A.top,A.sx(p[0]),A.sy(p[1]),CC[R.c[i]],7);d.setAttribute('class','rise');d.style.setProperty('--d',(.2+i*.012)+'s')});
+  R.mu.forEach((m,k)=>{const g=cent(A.top,A.sx(m[0]),A.sy(m[1]),CC[k],16);g.setAttribute('class','rise');g.style.setProperty('--d',(1.1+k*.15)+'s')});
+})();
+
+/* ---------- Supervised vs unsupervised ---------- */
+(function(){
+  const S=blobs(12,[[2.5,6.5,.8,.8,14],[6.5,3,.8,.8,14]]);
+  let A=plain($('#supSvg'),500,300,[0,9.5],[0,9.5],{xl:'x₁',yl:'x₂'});
+  el('line',{x1:A.sx(1.2),y1:A.sy(1),x2:A.sx(8.5),y2:A.sy(8.8),class:'bnd'},A.top);
+  S.forEach((p,i)=>i<14?mO(A.top,A.sx(p[0]),A.sy(p[1]),7):mX(A.top,A.sx(p[0]),A.sy(p[1]),7));
+  A=plain($('#unsSvg'),500,300,[0,9.5],[0,9.5],{xl:'x₁',yl:'x₂'});
+  S.forEach(p=>dot(A.top,A.sx(p[0]),A.sy(p[1]),'#111827',6));
+})();
+
+/* ---------- Clustering ---------- */
+(function(){
+  const A=plain($('#clSvg'),620,470,[0,9.5],[0,9.5],{xl:'x₁',yl:'x₂'});
+  TWO.forEach(p=>dot(A.top,A.sx(p[0]),A.sy(p[1]),'#111827',7));
+  [[2.2,6.6],[6.4,3.0]].forEach(([x,y],k)=>el('ellipse',{cx:A.sx(x),cy:A.sy(y),rx:A.sx(2.3)-A.sx(0),ry:A.sy(0)-A.sy(2.1),fill:'none',stroke:CC[k],'stroke-width':4,'stroke-dasharray':'10 8',class:'frag'},A.top));
+})();
+
+/* ---------- Step demo ---------- */
+const DEMO_INIT=[[4.6,8.6],[8.6,7.6]];
+const DEMO_J=[];
+(function(){
+  const A=plain($('#kmSvg'),640,500,[0,9.5],[0,9.5],{xl:'x₁',yl:'x₂'});
+  const trail=el('g',{},A.bg);
+  let mu,c,phase,it,done;
+  function draw(){drawClusters(A,TWO,c,mu,7);
+    const J=c?cost(TWO,c,mu):null;
+    $('#kmRead').innerHTML=`iteration: <b>${it}</b><br>next: <b>${done?'—':phase==='assign'?'cluster assignment':'move centroids'}</b>`+(J!==null?`<br>J = <b>${J.toFixed(3)}</b>`:'');}
+  function reset(){mu=DEMO_INIT.map(m=>m.slice());c=null;phase='assign';it=0;done=false;clear(trail);$('#kmHw').textContent='random initial centroids';$('#kmHw').style.color='#4b5563';draw()}
+  function step(){if(done)return;
+    if(phase==='assign'){const c2=assign(TWO,mu);if(c&&c2.every((v,i)=>v===c[i])&&it>0){done=true;$('#kmHw').textContent='converged: nothing changes';$('#kmHw').style.color='#16a34a';draw();return}
+      c=c2;it++;phase='move';$('#kmHw').textContent='each point takes the color of the closest centroid';$('#kmHw').style.color='#1d4ed8'}
+    else{const m2=moveC(TWO,c,mu);m2.forEach((m,k)=>el('line',{x1:A.sx(mu[k][0]),y1:A.sy(mu[k][1]),x2:A.sx(m[0]),y2:A.sy(m[1]),stroke:CC[k],'stroke-width':2.5,'stroke-dasharray':'6 6'},trail));
+      mu=m2;phase='assign';$('#kmHw').textContent='each centroid moves to the mean of its points';$('#kmHw').style.color='#dc2626'}
+    draw()}
+  $('#kmNext').onclick=step;$('#kmReset').onclick=reset;$('#kmRun').onclick=()=>{let n=0;while(!done&&n++<50)step()};
+  reset();
+  // precompute J sequence for slide 16
+  let m=DEMO_INIT.map(x=>x.slice()),cc=assign(TWO,m);DEMO_J.push(['assign 1',cost(TWO,cc,m)]);
+  for(let t=1;t<=4;t++){m=moveC(TWO,cc,m);DEMO_J.push(['move '+t,cost(TWO,cc,m)]);cc=assign(TWO,m);DEMO_J.push(['assign '+(t+1),cost(TWO,cc,m)])}
+})();
+
+/* ---------- T-shirt sizing ---------- */
+const TS=(()=>{const r=rng(31),P=[];for(let i=0;i<170;i++){const h=150+r()*45;const w=(h-150)*1.05+48+gauss(r)*5.5;P.push([h,w])}return P})();
+const TS_SZ={3:['S','M','L'],5:['XS','S','M','L','XL']};
+function tsFit(K){const R=bestKM(TS,K,30,5);const ord=R.mu.map((m,k)=>[m[0]+m[1],k]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);const rank=[];ord.forEach((k,j)=>rank[k]=j);return {c:R.c.map(k=>rank[k]),mu:ord.map(k=>R.mu[k])}}
+function tsDraw(svg,K,W,H,small){const A=axes(svg,{W,H,l:small?40:60,r:14,t:12,b:small?36:52,x:[148,197],y:[40,108],xt:small?[]:[150,160,170,180,190],yt:small?[]:[50,60,70,80,90,100],xl:'Height (cm)',yl:'Weight (kg)'});
+  const F=tsFit(K);const cols=K===3?[CC[0],CC[2],CC[1]]:[CC[4],CC[0],CC[2],CC[3],CC[1]];
+  TS.forEach((p,i)=>dot(A.top,A.sx(p[0]),A.sy(p[1]),cols[F.c[i]],small?4.5:5.5));
+  F.mu.forEach((m,k)=>{cent(A.top,A.sx(m[0]),A.sy(m[1]),cols[k],small?9:12);txt(A.top,A.sx(m[0])-16,A.sy(m[1])-16,TS_SZ[K][k],{'font-size':small?20:24,'font-weight':800,fill:cols[k],'text-anchor':'end'})});return F}
+(function(){
+  tsDraw($('#tsSvg'),3,620,480,false);
+  tsDraw($('#ds3Svg'),3,560,330,true);tsDraw($('#ds5Svg'),5,560,330,true);
+})();
+
+/* ---------- Distortion picture ---------- */
+(function(){
+  const A=plain($('#disSvg'),560,330,[0,9],[0,9],{xl:'x₁',yl:'x₂'});
+  const P=blobs(4,[[4.6,4.4,1.2,1.1,16]]);P.forEach(p=>dot(A.top,A.sx(p[0]),A.sy(p[1]),'#93a3c4',6));
+  const x=[7.1,6.9],m=[4.6,4.4];
+  el('line',{x1:A.sx(x[0]),y1:A.sy(x[1]),x2:A.sx(m[0]),y2:A.sy(m[1]),stroke:'#dc2626','stroke-width':4,'stroke-dasharray':'8 6'},A.top);
+  dot(A.top,A.sx(x[0]),A.sy(x[1]),CC[0],9);cent(A.top,A.sx(m[0]),A.sy(m[1]),CC[0],15);
+  txt(A.top,A.sx(x[0])+14,A.sy(x[1])-12,'x⁽ⁱ⁾',{'font-size':26,'font-weight':700,fill:'#1d4ed8'});
+  txt(A.top,A.sx(m[0])-30,A.sy(m[1])-24,'μ_c⁽ⁱ⁾',{'font-size':26,'font-weight':700,fill:'#1d4ed8','text-anchor':'end'});
+  txt(A.top,A.sx(6.1),A.sy(5.65)+40,'squared distance',{class:'hwt',fill:'#dc2626','font-size':30});
+})();
+
+/* ---------- J never increases ---------- */
+(function(){
+  const n=DEMO_J.length,mx=Math.max(...DEMO_J.map(d=>d[1]));
+  const A=axes($('#jSvg'),{W:560,H:400,l:60,r:16,t:16,b:50,x:[0.5,n+.5],y:[0,mx*1.12],xt:[],yt:[0,Math.round(mx/2),Math.round(mx)],xl:'step',yl:'J'});
+  let d='';DEMO_J.forEach(([lab,J],i)=>{const x=A.sx(i+1),y=A.sy(J);d+=(i?'L':'M')+x+','+y});
+  el('path',{d,class:'curve',style:'stroke:#7c3aed;stroke-width:3'},A.top);
+  DEMO_J.forEach(([lab,J],i)=>{el('circle',{cx:A.sx(i+1),cy:A.sy(J),r:7,fill:lab.startsWith('assign')?'#1d4ed8':'#dc2626'},A.top)});
+  txt(A.top,A.sx(n),A.sy(mx)+10,'● assign  ● move',{'font-size':20,'text-anchor':'end',fill:'#4b5563'});
+  const t=A.top.lastChild;t.innerHTML='<tspan fill="#1d4ed8">● assign</tspan>  <tspan fill="#dc2626">● move</tspan>';
+})();
+
+/* ---------- Init picks ---------- */
+(function(){
+  [['#in1Svg',[4,25,45]],['#in2Svg',[3,8,45]]].forEach(([id,idx])=>{
+    const A=plain($('#'+id.slice(1)),300,260,[0,9.5],[0,9.5],{l:16,b:16});
+    THREE.forEach(p=>dot(A.top,A.sx(p[0]),A.sy(p[1]),'#9ca3af',5));
+    // lucky: one in blob0, one in blob2 ; unlucky: two in same blob
+    idx.forEach((i,k)=>cent(A.top,A.sx(THREE[i][0]),A.sy(THREE[i][1]),CC[k],11));
+  });
+})();
+
+/* ---------- Local optima ---------- */
+const BEST3=bestKM(THREE,3,200,77).J;
+(function(){
+  const A=plain($('#loSvg'),620,480,[0,9.5],[0,9.5],{xl:'x₁',yl:'x₂'});
+  const r=rng(2024);let n=0;
+  const seq=[[0,20,40],[41,47,52],[23,30,9]]; // first clicks: good, stuck, good
+  function go1(){let init;if(n<seq.length)init=seq[n].map(i=>THREE[i].slice());else init=randInit(THREE,3,r);n++;
+    const R=runKM(THREE,init);drawClusters(A,THREE,R.c,R.mu,7);
+    init.forEach((m,k)=>el('circle',{cx:A.sx(m[0]),cy:A.sy(m[1]),r:14,fill:'none',stroke:CC[k],'stroke-width':2.5,'stroke-dasharray':'4 4'},A.dyn));
+    const good=R.J<BEST3*1.01;
+    $('#loRead').innerHTML=`run #${n}<br>distortion J = <b>${R.J.toFixed(2)}</b><br>best possible ≈ <b>${BEST3.toFixed(2)}</b>`;
+    $('#loHw').textContent=good?'good clustering (global optimum)':'stuck in a local optimum!';$('#loHw').style.color=good?'#16a34a':'#dc2626'}
+  $('#loBtn').onclick=go1;go1();
+})();
+
+/* ---------- Multiple inits ---------- */
+(function(){
+  const svg=$('#miSvg');
+  function run(){clear(svg);const r=rng(Math.floor(Math.random()*1e6)+1);const Js=[],res=[];
+    for(let t=0;t<100;t++){const R=runKM(THREE,randInit(THREE,3,r));Js.push(R.J);res.push(R)}
+    const bi=Js.indexOf(Math.min(...Js));const B=res[bi];
+    const A=plain(svg,520,330,[0,9.5],[0,9.5],{l:14,b:14});drawClusters(A,THREE,B.c,B.mu,6);
+    const nb=Js.filter(j=>j<BEST3*1.01).length;
+    $('#miRead').innerHTML=`100 runs · best J = <b>${Js[bi].toFixed(2)}</b> (run #${bi+1})<br>runs that found the best clustering: <b>${nb}</b> / 100 · others got stuck`}
+  $('#miBtn').onclick=run;
+  const A=plain(svg,520,330,[0,9.5],[0,9.5],{l:14,b:14});THREE.forEach(p=>dot(A.top,A.sx(p[0]),A.sy(p[1]),'#9ca3af',6));
+  $('#miRead').innerHTML='click the button to run K-means 100 times';
+})();
+
+/* ---------- Ambiguous K ---------- */
+const AMB=blobs(41,[[2.2,6.8,.55,.55,16],[3.6,5.6,.55,.55,16],[6.4,3.6,.55,.55,16],[7.7,2.4,.55,.55,16]]);
+(function(){
+  const A=plain($('#amSvg'),620,480,[0,9.5],[0,9.5],{xl:'x₁',yl:'x₂'});
+  function show(K){const R=bestKM(AMB,K,40,9);drawClusters(A,AMB,R.c,R.mu,7);document.querySelectorAll('#amBtns .btn').forEach(b=>b.classList.toggle('on',+b.dataset.k===K))}
+  document.querySelectorAll('#amBtns .btn').forEach(b=>b.onclick=()=>show(+b.dataset.k));show(4);
+})();
+
+/* ---------- Elbow ---------- */
+(function(){
+  const CLEAR=THREE;
+  const VAG=(()=>{const r=rng(17),P=[];for(let i=0;i<90;i++)P.push([1+r()*7.5,1+r()*7.5]);return P})();
+  function curve(id,P,elbow){const Js=[];for(let K=1;K<=8;K++)Js.push(bestKM(P,K,25,K*7).J);
+    const A=axes($(id),{W:560,H:330,l:60,r:16,t:14,b:50,x:[.5,8.5],y:[0,Js[0]*1.08],xt:[1,2,3,4,5,6,7,8],yt:[],xl:'K (no. of clusters)',yl:'J'});
+    let d='';Js.forEach((J,i)=>d+=(i?'L':'M')+A.sx(i+1)+','+A.sy(J));el('path',{d,class:'curve',style:'stroke:#7c3aed;stroke-width:3.5'},A.top);
+    Js.forEach((J,i)=>el('circle',{cx:A.sx(i+1),cy:A.sy(J),r:6,fill:'#7c3aed'},A.top));
+    if(elbow){el('circle',{cx:A.sx(3),cy:A.sy(Js[2]),r:18,fill:'none',stroke:'#16a34a','stroke-width':3.5},A.top);txt(A.top,A.sx(3)+24,A.sy(Js[2])-22,'elbow',{class:'hwt',fill:'#16a34a','font-size':30})}
+    return Js}
+  window.ELBOW=[curve('#el1Svg',CLEAR,true),curve('#el2Svg',VAG,false)];
+})();
+
+/* ---------- MCQ (single + multi) ---------- */
+document.querySelectorAll('.mcq').forEach(m=>{
+  const opts=[...m.querySelectorAll('button')].filter(b=>!b.classList.contains('chk'));
+  const why=m.querySelector('.why');
+  if(m.classList.contains('multi')){
+    why.dataset.t=why.innerHTML;
+    opts.forEach(b=>b.onclick=()=>{opts.forEach(x=>x.classList.remove('right','wrong'));b.classList.toggle('sel')});
+    m.querySelector('.chk').onclick=()=>{let ok=true;opts.forEach(b=>{const s=b.classList.contains('sel'),r=!!b.dataset.ok;
+        b.classList.remove('right','wrong');if(s&&r)b.classList.add('right');else if(s&&!r){b.classList.add('wrong');ok=false}else if(!s&&r)ok=false});
+      why.classList.toggle('no',!ok);why.innerHTML=(ok?'Correct! ':'Not quite. ')+why.dataset.t;why.classList.add('show');
+      if(window.renderMathInElement)renderMathInElement(why,MATHOPT)};
+  } else opts.forEach(b=>b.onclick=()=>{b.classList.add(b.dataset.ok?'right':'wrong');if(b.dataset.ok)why.classList.add('show')});
+});
+
+/* ---------- Auto-fit: enlarge each content slide to fill the space ---------- */
+function autoFit(){
+  const AW=1152, AH=720-34-74;
+  document.querySelectorAll('.slide:not(.title):not(.sec)').forEach(s=>{
+    let w=s.querySelector(':scope > .fitw');
+    if(!w){w=document.createElement('div');w.className='fitw';while(s.firstChild)w.appendChild(s.firstChild);s.appendChild(w)}
+    s.style.display='flex';s.style.visibility='hidden';s.classList.add('measuring');
+    let z=1.32;
+    for(;z>0.8;z-=0.02){w.style.zoom=z;w.style.width=(AW/z)+'px';if(w.scrollHeight*z<=AH&&w.scrollWidth<=AW/z+1&&[...w.querySelectorAll('.katex-display,.code')].every(k=>k.scrollWidth<=k.clientWidth+1))break}
+    s.style.display='';s.style.visibility='';s.classList.remove('measuring');
+    s.dataset.zoom=z.toFixed(2);
+  });
+}
+
+/* ---------- Navigation ---------- */
+const stage=$('#stage'),slides=[...document.querySelectorAll('.slide')];let cur=0;
+function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${s})`}
+function frs(s){return [...s.querySelectorAll('.frag')].map((f,i)=>[f,f.dataset.o!==undefined?+f.dataset.o:(f.getAttribute('data-o')!==null?+f.getAttribute('data-o'):i)]).sort((a,b)=>a[1]-b[1]).map(a=>a[0])}
+function go(i,all){i=Math.max(0,Math.min(slides.length-1,i));slides[cur].classList.remove('active');cur=i;const s=slides[i];
+  frs(s).forEach(f=>f.classList.toggle('shown',!!all));void s.offsetWidth;s.classList.add('active');
+  $('#fnum').textContent=(i+1)+' / '+slides.length;$('#cnt').textContent=(i+1)+'/'+slides.length;$('#prog').style.width=((i+1)/slides.length*100)+'%';
+  document.querySelector('.foot').style.display=i===0?'none':'flex';
+  try{history.replaceState(null,'','#'+(i+1))}catch(e){}}
+function next(){const f=frs(slides[cur]).find(x=>!x.classList.contains('shown'));if(f)f.classList.add('shown');else if(cur<slides.length-1)go(cur+1,false)}
+function prev(){if(cur>0)go(cur-1,true)}
+stage.addEventListener('click',e=>{if(e.target.closest('button,input,a,label,select,.ix,.mcq'))return;next()});
+document.addEventListener('keydown',e=>{const tg=e.target.tagName;
+  if(tg==='INPUT'&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;
+  if(['ArrowRight','PageDown',' ','Enter','ArrowDown'].includes(e.key)){e.preventDefault();next()}
+  else if(['ArrowLeft','PageUp','Backspace','ArrowUp'].includes(e.key)){e.preventDefault();prev()}
+  else if(e.key==='Home')go(0);else if(e.key==='End')go(slides.length-1,true);
+  else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})}});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(b)setTimeout(()=>b.blur(),0)});
+document.addEventListener('change',e=>{if(e.target.tagName==='INPUT')e.target.blur()});
+$('#bPrev').onclick=prev;$('#bNext').onclick=next;$('#bFs').onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})};
+addEventListener('resize',fit);fit();
+let h0=NaN;try{h0=parseInt(location.hash.slice(1))}catch(e){}go(isNaN(h0)?0:h0-1,!isNaN(h0));
+setTimeout(()=>$('#hint').style.opacity=0,4500);
+window.addEventListener('load',()=>{if(window.renderMathInElement)renderMathInElement(document.body,MATHOPT);(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>{autoFit();go(cur,true);setTimeout(autoFit,700);setTimeout(autoFit,2000)})});
+</script>
+</body>
+</html>

@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEAI502 · Ch 4 · Regularization</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=STIX+Two+Text:wght@400;500;600;700&family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --ink:#0b0b0f; --muted:#4b5563; --line:#e2e5ea; --card:#f8fafc;
+  --blue:#1d4ed8; --blue-soft:#e6edff; --red:#dc2626; --red-soft:#fee6e6;
+  --green:#16a34a; --green-soft:#e3f6ea; --orange:#f59e0b; --orange-soft:#fff4dc;
+  --purple:#7c3aed; --purple-soft:#efe7ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#fff;overflow:hidden;font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink)}
+.stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;background:var(--bg);box-shadow:0 0 0 1px #eceef2;overflow:hidden}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:34px 64px 60px}
+.slide.active{display:flex;animation:fade .5s cubic-bezier(.2,.7,.2,1)}
+@keyframes fade{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(1.25);opacity:0}70%{transform:scale(.97)}100%{transform:scale(1);opacity:1}}
+@keyframes draw{to{stroke-dashoffset:0}}
+.slide.active .rise{animation:rise .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,0s)}
+.kicker{font-size:18px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+h2{font-family:"STIX Two Text",Georgia,serif;font-weight:600;font-size:54px;line-height:1.08;letter-spacing:-.01em;margin:2px 0 18px;color:var(--ink)}
+p,li{font-size:27px;line-height:1.42}
+.muted{color:var(--muted)}
+b,strong{font-weight:800}
+.blue{color:var(--blue)} .red{color:var(--red)} .green{color:var(--green)} .orange{color:#d97706} .purple{color:var(--purple)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:30px;flex:1;min-height:0}
+.cols.l6{grid-template-columns:1.25fr 1fr}
+.cols.r6{grid-template-columns:1fr 1.25fr}
+.stack{display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border:2px solid var(--line);border-radius:16px;padding:16px 22px}
+.card.b{border-color:var(--blue);background:var(--blue-soft)}
+.card.r{border-color:var(--red);background:var(--red-soft)}
+.card.g{border-color:var(--green);background:var(--green-soft)}
+.card.o{border-color:var(--orange);background:var(--orange-soft)}
+.card.p{border-color:var(--purple);background:var(--purple-soft)}
+.card h3{font-size:27px;font-weight:800;margin-bottom:4px}
+.card p,.card li{font-size:25px}
+.eq{font-size:28px;line-height:1.6}
+.eq .katex-display{margin:.25em 0}
+.katex{font-size:1.08em}
+ul.dots{list-style:none;display:flex;flex-direction:column;gap:10px}
+ul.dots li{position:relative;padding-left:30px}
+ul.dots li::before{content:"";position:absolute;left:4px;top:.55em;width:12px;height:12px;border-radius:50%;background:var(--blue)}
+.frag{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}
+.frag.shown{opacity:1;transform:none}
+svg .frag{transform:none!important}
+.hw{font-family:Caveat,cursive;font-weight:700;font-size:34px;color:var(--blue);line-height:1.1}
+.hw.r{color:var(--red)} .hw.g{color:var(--green)} .hw.o{color:#d97706} .hw.p{color:var(--purple)}
+.hw.frag{opacity:1;transform:none;clip-path:inset(0 100% 0 0);transition:clip-path 1.1s ease}
+.hw.frag.shown{clip-path:inset(0 0 0 0)}
+.frag.drawp{opacity:1;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.1s ease}
+.frag.drawp.shown{stroke-dashoffset:0}
+.frag.popin{transform:scale(.6)} .frag.popin.shown{transform:none;transition:opacity .35s,transform .45s cubic-bezier(.3,1.6,.5,1)}
+.callout{border-left:6px solid var(--blue);background:var(--blue-soft);padding:12px 20px;border-radius:0 12px 12px 0;font-size:26px}
+.callout.r{border-color:var(--red);background:var(--red-soft)}
+.callout.g{border-color:var(--green);background:var(--green-soft)}
+.callout.o{border-color:var(--orange);background:var(--orange-soft)}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:17px;font-weight:800;letter-spacing:.04em}
+.pill.b{background:var(--blue-soft);color:var(--blue)} .pill.r{background:var(--red-soft);color:var(--red)} .pill.g{background:var(--green-soft);color:var(--green)}
+/* widgets */
+.ix{position:relative}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px 18px}
+.lab{font-size:21px;font-weight:700;display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.lab span.v{font-family:"JetBrains Mono",monospace;color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--blue);height:30px;cursor:pointer}
+.btn{font:700 18px "Plus Jakarta Sans",sans-serif;padding:9px 16px;border-radius:10px;border:2px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer;transition:transform .12s,background .2s}
+.btn:hover{background:var(--blue-soft)} .btn:active{transform:scale(.96)}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.on{background:var(--blue);color:#fff}
+.btn.r{border-color:var(--red);color:var(--red)} .btn.r.on{background:var(--red);color:#fff}
+.btn.g{border-color:var(--green);color:var(--green)} .btn.g.on{background:var(--green);color:#fff}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.read{font-family:"JetBrains Mono",monospace;font-size:21px;line-height:1.55}
+.big{font-size:46px;font-weight:800;font-family:"JetBrains Mono",monospace}
+.code{font-family:"JetBrains Mono",monospace;font-size:18.5px;line-height:1.6;background:#0f172a;color:#e2e8f0;border-radius:14px;padding:18px 22px;white-space:pre}
+.code .c{color:#94a3b8} .code .k{color:#93c5fd} .code .s{color:#86efac} .code .f{color:#fcd34d}
+svg text{font-family:"Plus Jakarta Sans",sans-serif}
+.grid{stroke:#eef0f3;stroke-width:1}
+.axis{stroke:#111;stroke-width:2;fill:none}
+.tick{font-size:16px;fill:#4b5563}
+.alab{font-size:19px;font-weight:700;fill:#111}
+.ox{fill:#fff;stroke:var(--blue);stroke-width:3}
+.xx line{stroke:var(--red);stroke-width:3.6;stroke-linecap:round}
+.tri{fill:#fff;stroke:var(--green);stroke-width:3;stroke-linejoin:round}
+.sq{fill:#fff;stroke:var(--blue);stroke-width:3}
+.dim,.dim line{stroke:#c3c8d0!important}
+.curve{fill:none;stroke:var(--red);stroke-width:4;stroke-linecap:round}
+.fit{stroke:var(--purple);stroke-width:4;stroke-linecap:round}
+.thr{stroke:var(--orange);stroke-width:3;stroke-dasharray:9 7}
+.bnd{stroke:var(--green);stroke-width:4;stroke-linecap:round;fill:none}
+.svgw{width:100%;height:auto;display:block}
+.hwt{font-family:Caveat,cursive;font-weight:700;font-size:30px}
+/* quiz */
+.mcq button,.qopt{font:600 22px "Plus Jakarta Sans",sans-serif;text-align:left;padding:10px 16px;border-radius:12px;border:2px solid var(--line);background:#fff;cursor:pointer;transition:all .2s}
+.mcq button:hover,.qopt:hover{border-color:var(--blue)}
+.mcq button.right,.qopt.right{border-color:var(--green);background:var(--green-soft)}
+.mcq button.wrong,.qopt.wrong{border-color:var(--red);background:var(--red-soft)}
+.why{display:none;font-size:21px;margin-top:6px;color:var(--green);font-weight:700}
+.why.show{display:block;animation:rise .4s both}
+/* title + sections */
+.slide.title{flex-direction:row;align-items:center;padding:60px 70px}
+.ttl{font-family:"STIX Two Text",Georgia,serif;font-weight:600;font-size:96px;line-height:.98;margin:14px 0 14px;letter-spacing:-.015em}
+.tsub{font-size:30px;color:var(--muted);font-weight:500}
+.tbar{width:220px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--red));margin:30px 0 24px}
+.who{font-size:21px;line-height:1.5;color:var(--muted)} .who b{color:var(--ink);font-size:25px}
+.slide.sec{justify-content:center}
+.secwrap{display:flex;align-items:center;gap:40px}
+.secnum{font-family:"STIX Two Text",serif;font-size:200px;font-weight:700;color:var(--blue);line-height:1}
+.secbar{width:12px;height:210px;border-radius:6px;background:linear-gradient(180deg,var(--blue),var(--red))}
+.sectitle{font-family:"STIX Two Text",serif;font-size:78px;font-weight:600;line-height:1.02;margin:8px 0 12px}
+.secsub{font-size:27px;color:var(--muted)}
+/* footer/nav */
+.foot{position:absolute;left:64px;right:64px;bottom:16px;display:flex;justify-content:space-between;font-size:15px;color:#6b7280;font-weight:600;pointer-events:none}
+.prog{position:absolute;left:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--blue),var(--red));transition:width .4s}
+.navzone{position:fixed;right:0;bottom:0;width:340px;height:110px;z-index:9}
+.navui{position:fixed;right:18px;bottom:14px;display:flex;gap:8px;align-items:center;z-index:10;opacity:.9}
+.navzone:hover+.navui,.navui:hover{opacity:1}
+.navui button{font:700 18px "Plus Jakarta Sans";width:46px;height:42px;border-radius:10px;border:2px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+.navui .cnt{font:700 16px "JetBrains Mono";color:var(--muted);padding:0 6px;background:#fff;border-radius:8px}
+.hint{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#0b0b0f;color:#fff;font-size:15px;padding:8px 16px;border-radius:999px;opacity:.85;z-index:11;transition:opacity .6s}
+.pbar{display:flex;height:64px;border-radius:14px;overflow:hidden;border:2px solid var(--line);font:800 21px "JetBrains Mono";color:#fff}
+.pbar div{display:flex;align-items:center;justify-content:center;transition:width .25s;white-space:nowrap;overflow:hidden}
+.p1{background:var(--red)} .p0{background:var(--blue)}
+.obar{display:flex;align-items:center;gap:10px;font:700 19px "JetBrains Mono";margin:6px 0}
+.obar .tr{flex:1;height:26px;background:#eef0f3;border-radius:8px;overflow:hidden}
+.obar .fl{height:100%;border-radius:8px;transition:width .3s}
+.obar.max{outline:3px solid var(--orange);outline-offset:3px;border-radius:8px}
+table.t{border-collapse:collapse;font-size:22px}
+table.t td,table.t th{border-bottom:2px solid var(--line);padding:8px 14px;text-align:left}
+table.t th{font-size:17px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.navui button{width:auto;padding:0 14px}
+.mcq button.sel{border-color:var(--blue);background:var(--blue-soft)}
+.mcq .chk{align-self:flex-start;margin-top:4px}
+.mcq .why.no{color:var(--red)}
+.mat{font-family:"JetBrains Mono",monospace}
+.tag{font:800 15px "Plus Jakarta Sans";letter-spacing:.06em;text-transform:uppercase;padding:2px 10px;border-radius:999px;color:#fff}
+.opt{border:2px dashed #c3c8d0;border-radius:16px;padding:14px 20px}
+.mini{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mini .qopt{padding:6px}
+
+.q1 button{font-size:20px;padding:7px 14px}
+#fnum{display:none}
+.fitw{display:flex;flex-direction:column;flex:0 0 auto}
+.fitw > .cols, .fitw > div{flex:0 0 auto}
+
+.measuring .why{display:block!important}
+.mcq button.right{border-color:var(--green)!important;background:var(--green-soft)!important}
+.mcq button.wrong{border-color:var(--red)!important;background:var(--red-soft)!important}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#111"/></marker>
+<marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/></marker>
+<marker id="arrR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+<marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+</defs></svg>
+
+<div class="stage" id="stage">
+<!-- 1 TITLE -->
+<section class="slide title" data-title="Title">
+  <div style="flex:1">
+    <div class="kicker rise">MEAI502 · Applied Machine Learning · Chapter 4</div>
+    <h1 class="ttl rise" style="--d:.1s">Regularization</h1>
+    <div class="tsub rise" style="--d:.2s">Helping models generalize to examples they have never seen</div>
+    <div class="tbar rise" style="--d:.3s"></div>
+    <div class="who rise" style="--d:.4s"><b>Dr. Naila Marir</b><br>Effat College of Engineering</div>
+  </div>
+  <svg id="titleSvg" style="width:520px;height:440px" viewBox="0 0 520 440"></svg>
+</section>
+
+<!-- 2 ROADMAP -->
+<section class="slide" data-title="Roadmap">
+  <div class="kicker">Today</div>
+  <h2>Chapter roadmap</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;flex:1;align-content:start">
+    <div class="card b frag"><div class="pill b">01</div><h3 style="margin-top:8px">The problem of overfitting</h3><p>Underfitting, overfitting, and the two ways to address them</p></div>
+    <div class="card r frag"><div class="pill r">02</div><h3 style="margin-top:8px">Cost function</h3><p>Penalizing large parameters, and the regularization parameter λ</p></div>
+    <div class="card g frag"><div class="pill g">03</div><h3 style="margin-top:8px">Regularized linear regression</h3><p>Gradient descent with λ, and what each step does</p></div>
+    <div class="card o frag"><div class="pill" style="background:#fff;color:#d97706">04</div><h3 style="margin-top:8px">Regularized logistic regression</h3><p>The regularized cost and gradient descent with λ</p></div>
+  </div>
+</section>
+
+<!-- 3 SECTION 1 -->
+<section class="slide sec" data-title="Part 1">
+  <div class="secwrap"><div class="secnum rise">01</div><div class="secbar rise" style="--d:.1s"></div>
+  <div class="rise" style="--d:.2s"><div class="kicker">Part 1</div><h1 class="sectitle">The Problem of<br>Overfitting</h1><p class="secsub">When a model fits the training set too well</p></div></div>
+</section>
+
+<!-- 4 WHY -->
+<section class="slide" data-title="Why this chapter">
+  <div class="kicker">Part 1 · Overfitting</div>
+  <h2>Good algorithms can still perform poorly</h2>
+  <div class="cols">
+    <div class="stack">
+      <p>So far we have two learning algorithms:</p>
+      <div class="card b frag"><h3 class="blue">Linear regression</h3><p>Predict a number, such as a house price.</p></div>
+      <div class="card r frag"><h3 class="red">Logistic regression</h3><p>Predict a class, such as malignant or benign.</p></div>
+      <p class="frag">Both work well for many problems. But in some applications they suffer from <b class="red">overfitting</b> and perform very poorly.</p>
+    </div>
+    <div class="stack">
+      <div class="card g frag"><h3 class="green">Generalization</h3><p>How well a hypothesis applies to <b>new examples</b>: houses that were <b>not</b> in the training set.</p></div>
+      <div class="hw g frag" style="text-align:right">the real test is new data, not the training set</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 HOUSING THREE FITS -->
+<section class="slide" data-title="Housing: three fits">
+  <div class="kicker">Part 1 · Linear regression example</div>
+  <h2>Predicting housing prices from size</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+    <div class="stack" style="gap:6px"><svg id="h1Svg" class="svgw"></svg>
+      <div class="eq frag" style="font-size:22px;text-align:center" data-o="0">\(\theta_0+\theta_1x\)</div>
+      <div class="frag" data-o="1" style="text-align:center"><span class="pill r">Underfit</span> <span class="pill r">High bias</span></div></div>
+    <div class="stack" style="gap:6px"><svg id="h2Svg" class="svgw"></svg>
+      <div class="eq frag" style="font-size:22px;text-align:center" data-o="2">\(\theta_0+\theta_1x+\theta_2x^2\)</div>
+      <div class="frag" data-o="3" style="text-align:center"><span class="pill g">Just right</span></div></div>
+    <div class="stack" style="gap:6px"><svg id="h3Svg" class="svgw"></svg>
+      <div class="eq frag" style="font-size:22px;text-align:center" data-o="4">\(\theta_0+\theta_1x+\theta_2x^2+\theta_3x^3+\theta_4x^4\)</div>
+      <div class="frag" data-o="5" style="text-align:center"><span class="pill b">Overfit</span> <span class="pill b">High variance</span></div></div>
+  </div>
+  <p class="muted frag" data-o="6" style="margin-top:12px;font-size:23px">Five parameters \(\theta_0,\dots,\theta_4\) for five training examples: the curve can pass through <b>every</b> point.</p>
+</section>
+
+<!-- 6 BIAS vs VARIANCE -->
+<section class="slide" data-title="Bias and variance">
+  <div class="kicker">Part 1 · Overfitting</div>
+  <h2>High bias and high variance</h2>
+  <div class="cols">
+    <div class="card r frag" style="align-self:start"><h3 class="red">Underfitting = high bias</h3>
+      <p>The algorithm does not even fit the <b>training</b> data well.</p>
+      <p style="margin-top:8px">It is as if it has a strong <b>preconception</b> that prices vary <b>linearly</b> with size, and it keeps a straight line despite the data showing the contrary.</p></div>
+    <div class="card b frag" style="align-self:start"><h3 class="blue">Overfitting = high variance</h3>
+      <p>A high-order polynomial can fit almost <b>any</b> function. The space of possible hypotheses is too large, too variable.</p>
+      <p style="margin-top:8px">We do not have enough data to constrain it to a good hypothesis.</p></div>
+  </div>
+  <div class="callout frag" style="margin-top:20px"><b>Overfitting:</b> if we have too many features, the learned hypothesis may fit the training set very well, with \(J(\theta)=\frac{1}{2m}\sum_{i=1}^{m}\big(h_\theta(x^{(i)})-y^{(i)}\big)^2\approx 0\), but <b>fail to generalize</b> to new examples (predicting prices of new houses).</div>
+</section>
+
+<!-- 7 DEGREE DEMO -->
+<section class="slide" data-title="Try it: degree">
+  <div class="kicker">Part 1 · Try it</div>
+  <h2>Training error vs error on new houses</h2>
+  <div class="cols" style="grid-template-columns:1.45fr 1fr">
+    <div class="ix"><svg id="degSvg" class="svgw"></svg></div>
+    <div class="stack ix">
+      <div class="panel">
+        <div class="lab">Polynomial degree <span class="v" id="degV"></span></div>
+        <input type="range" id="degS" min="1" max="8" step="1" value="1">
+        <div style="display:flex;gap:14px;margin-top:6px;font-size:19px"><span><b class="red">✕</b> training houses</span><span><b class="green">▲</b> new houses</span></div>
+      </div>
+      <div class="panel">
+        <div class="obar"><span style="width:92px">train</span><div class="tr"><div class="fl" id="trB" style="background:var(--red)"></div></div><span id="trV" style="width:70px;text-align:right"></span></div>
+        <div class="obar"><span style="width:92px">new</span><div class="tr"><div class="fl" id="teB" style="background:var(--green)"></div></div><span id="teV" style="width:70px;text-align:right"></span></div>
+        <p class="muted" style="font-size:17px;margin-top:4px">mean squared error</p>
+      </div>
+      <div class="panel read" id="degRead" style="font-size:20px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 LOGISTIC OVERFITTING -->
+<section class="slide" data-title="Logistic regression overfitting">
+  <div class="kicker">Part 1 · Logistic regression example</div>
+  <h2>Overfitting happens in classification too</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+    <div class="stack" style="gap:6px"><svg id="l1Svg" class="svgw"></svg>
+      <div class="eq frag" style="font-size:20px;text-align:center" data-o="0">\(g(\theta_0+\theta_1x_1+\theta_2x_2)\)</div>
+      <div class="frag" data-o="1" style="text-align:center"><span class="pill r">Underfit</span> <span class="pill r">High bias</span></div></div>
+    <div class="stack" style="gap:6px"><svg id="l2Svg" class="svgw"></svg>
+      <div class="eq frag" style="font-size:20px;text-align:center" data-o="2">\(g(\theta_0+\theta_1x_1+\theta_2x_2+\theta_3x_1^2+\theta_4x_2^2+\theta_5x_1x_2)\)</div>
+      <div class="frag" data-o="3" style="text-align:center"><span class="pill g">Just right</span></div></div>
+    <div class="stack" style="gap:6px"><svg id="l3Svg" class="svgw"></svg>
+      <div class="eq frag" style="font-size:20px;text-align:center" data-o="4">\(g(\theta_0+\theta_1x_1+\theta_2x_1^2+\theta_3x_1^2x_2+\theta_4x_1^2x_2^2+\cdots)\)</div>
+      <div class="frag" data-o="5" style="text-align:center"><span class="pill b">Overfit</span> <span class="pill b">High variance</span></div></div>
+  </div>
+  <p class="frag" data-o="6" style="margin-top:12px;font-size:23px">\(g\) = sigmoid. With many high-order terms, logistic regression <b>contorts</b> itself to classify every training tumour correctly, and is unlikely to generalize. <span class="muted">Later we will learn tools to diagnose this.</span></p>
+</section>
+
+<!-- 9 MANY FEATURES -->
+<section class="slide" data-title="Many features">
+  <div class="kicker">Part 1 · Addressing overfitting</div>
+  <h2>We cannot always plot the hypothesis</h2>
+  <div class="cols">
+    <div class="stack">
+      <p>With one or two features we can <b>plot</b> the hypothesis and pick a sensible polynomial degree.</p>
+      <p class="frag">But real problems often have <b>many features</b>. Then it is hard to visualize the data and decide which features to keep.</p>
+      <div class="callout r frag"><b>Many features + little training data</b> → overfitting becomes a problem.</div>
+    </div>
+    <div class="card frag"><h3>Predicting a house price</h3>
+      <table class="t" style="margin-top:6px;width:100%">
+        <tr><td>\(x_1\)</td><td>size of house</td></tr><tr><td>\(x_2\)</td><td>no. of bedrooms</td></tr><tr><td>\(x_3\)</td><td>no. of floors</td></tr>
+        <tr><td>\(x_4\)</td><td>age of house</td></tr><tr><td>\(x_5\)</td><td>average income in neighborhood</td></tr><tr><td>\(x_6\)</td><td>kitchen size</td></tr><tr><td>\(\vdots\)</td><td>\(\vdots\)</td></tr><tr><td>\(x_{100}\)</td><td class="muted">…</td></tr>
+      </table>
+      <div class="hw o" style="margin-top:6px">each one seems kind of useful…</div></div>
+  </div>
+</section>
+
+<!-- 10 TWO OPTIONS -->
+<section class="slide" data-title="Two options">
+  <div class="kicker">Part 1 · Addressing overfitting</div>
+  <h2>Two main options</h2>
+  <div class="cols">
+    <div class="card o frag" style="align-self:start"><h3 class="orange">1 · Reduce the number of features</h3>
+      <ul class="dots" style="margin-top:8px"><li>Manually select which features to keep</li><li>Model selection algorithms decide automatically <span class="muted">(later in the course)</span></li></ul>
+      <p class="red" style="margin-top:10px"><b>Downside:</b> throwing away features also throws away information about the problem.</p></div>
+    <div class="card g frag" style="align-self:start"><h3 class="green">2 · Regularization</h3>
+      <ul class="dots" style="margin-top:8px"><li>Keep <b>all</b> the features</li><li>Reduce the magnitude (values) of the parameters \(\theta_j\)</li></ul>
+      <p style="margin-top:10px">Works well when we have <b>many features, each contributing a bit</b> to predicting \(y\).</p></div>
+  </div>
+  <div class="hw g frag" style="text-align:center;margin-top:22px;font-size:40px">next: what regularization means, exactly</div>
+</section>
+
+<!-- 11 SECTION 2 -->
+<section class="slide sec" data-title="Part 2">
+  <div class="secwrap"><div class="secnum rise">02</div><div class="secbar rise" style="--d:.1s"></div>
+  <div class="rise" style="--d:.2s"><div class="kicker">Part 2</div><h1 class="sectitle">Cost Function</h1><p class="secsub">Penalizing large parameters</p></div></div>
+</section>
+
+<!-- 12 INTUITION -->
+<section class="slide" data-title="Intuition">
+  <div class="kicker">Part 2 · Intuition</div>
+  <h2>Suppose we penalize \(\theta_3\) and \(\theta_4\)</h2>
+  <div class="cols" style="grid-template-columns:1.25fr 1fr">
+    <div class="ix"><svg id="pSvg" class="svgw"></svg></div>
+    <div class="stack ix">
+      <div class="eq" style="font-size:23px">\[\min_\theta\ \frac{1}{2m}\sum_{i=1}^{m}\big(h_\theta(x^{(i)})-y^{(i)}\big)^2 \;{\color{#dc2626}+\,W\,\theta_3^2+W\,\theta_4^2}\]</div>
+      <div class="panel">
+        <div class="lab">Penalty W <span class="v" id="pV"></span></div>
+        <input type="range" id="pS" min="0" max="4" step="1" value="0">
+        <div class="read" id="pRead" style="margin-top:6px"></div>
+      </div>
+      <p style="font-size:23px">With W = <b>1000</b>, the only way to keep the cost small is \(\theta_3\approx0\), \(\theta_4\approx0\).</p>
+      <div class="hw g">we are left with (almost) a quadratic!</div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 SMALL PARAMETERS -->
+<section class="slide" data-title="Small parameters">
+  <div class="kicker">Part 2 · The idea</div>
+  <h2>Small parameter values</h2>
+  <div class="cols">
+    <div class="stack">
+      <div class="card g frag"><h3 class="green">Small values for \(\theta_0,\theta_1,\dots,\theta_n\)</h3>
+        <ul class="dots" style="margin-top:6px"><li>a <b>simpler</b>, smoother hypothesis</li><li><b>less prone</b> to overfitting</li></ul></div>
+      <p class="frag muted" style="font-size:23px">Why small values mean "simpler" is easiest to see when you implement it yourself in the lab.</p>
+    </div>
+    <div class="stack">
+      <div class="card frag"><h3>Housing, with 100 features</h3>
+        <p>Features: \(x_1,x_2,\dots,x_{100}\)<br>Parameters: \(\theta_0,\theta_1,\theta_2,\dots,\theta_{100}\)</p></div>
+      <div class="callout o frag">Unlike the polynomial example, we <b>don't know</b> which parameters belong to the less relevant features.</div>
+      <div class="callout g frag">So we shrink <b>all</b> of them.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 REGULARIZED COST -->
+<section class="slide" data-title="Regularized cost">
+  <div class="kicker">Part 2 · Cost function</div>
+  <h2>The regularized cost function</h2>
+  <div class="eq" style="font-size:34px;text-align:center;margin-top:6px">\[J(\theta)=\frac{1}{2m}\Big[\;{\color{#1d4ed8}\sum_{i=1}^{m}\big(h_\theta(x^{(i)})-y^{(i)}\big)^2}\;+\;{\color{#dc2626}\lambda\sum_{j=1}^{n}\theta_j^2}\;\Big]\qquad \min_\theta J(\theta)\]</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:10px">
+    <div class="card b frag"><h3 class="blue">Goal 1 · fit the data</h3><p>The usual squared error: fit the training set well.</p></div>
+    <div class="card r frag"><h3 class="red">Goal 2 · keep θ small</h3><p>The <b>regularization term</b>: keeps the hypothesis simple to avoid overfitting.</p></div>
+    <div class="card p frag"><h3 class="purple">λ · the balance</h3><p>The <b>regularization parameter</b> controls the trade-off between the two goals.</p></div>
+  </div>
+  <div class="callout o frag" style="margin-top:16px">By convention the sum starts at \(j=1\): we do <b>not</b> penalize \(\theta_0\). In practice, including it makes very little difference.</div>
+</section>
+
+<!-- 15 LAMBDA DEMO -->
+<section class="slide" data-title="Try it: lambda">
+  <div class="kicker">Part 2 · Try it</div>
+  <h2>λ controls the trade-off</h2>
+  <div class="cols" style="grid-template-columns:1.45fr 1fr">
+    <div class="ix"><svg id="lamSvg" class="svgw"></svg></div>
+    <div class="stack ix">
+      <div class="panel">
+        <p style="font-size:20px">Degree-8 polynomial, <b>all</b> features kept.</p>
+        <div class="lab">λ <span class="v" id="lamV"></span></div>
+        <input type="range" id="lamS" min="0" max="9" step="1" value="0">
+        <div class="btns" style="margin-top:6px"><button class="btn" data-l="0">λ = 0</button><button class="btn" data-l="4">good λ</button><button class="btn r" data-l="9">huge λ</button></div>
+      </div>
+      <div class="panel">
+        <div class="obar"><span style="width:92px">train</span><div class="tr"><div class="fl" id="ltrB" style="background:var(--red)"></div></div><span id="ltrV" style="width:70px;text-align:right"></span></div>
+        <div class="obar"><span style="width:92px">new</span><div class="tr"><div class="fl" id="lteB" style="background:var(--green)"></div></div><span id="lteV" style="width:70px;text-align:right"></span></div>
+      </div>
+      <div class="panel read" id="lamRead" style="font-size:20px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 LAMBDA TOO LARGE -->
+<section class="slide" data-title="Lambda too large">
+  <div class="kicker">Part 2 · Check</div>
+  <h2>What if \(\lambda=10^{10}\)?</h2>
+  <div class="cols">
+    <div class="mcq stack ix" style="gap:10px">
+      <button>The algorithm works fine; a very large λ can't hurt it</button>
+      <button>The algorithm fails to eliminate overfitting</button>
+      <button data-ok="1">The algorithm underfits: it fails to fit even the training data well</button>
+      <button>Gradient descent will fail to converge</button>
+      <div class="why">Correct: all of \(\theta_1,\dots,\theta_n\to0\), so \(h_\theta(x)\approx\theta_0\), a flat line.</div>
+    </div>
+    <div class="stack">
+      <p class="frag" style="font-size:23px">\(h_\theta(x)=\theta_0+\cancel{\theta_1x}+\cancel{\theta_2x^2}+\cancel{\theta_3x^3}+\cancel{\theta_4x^4}\) <span class="red"><b>high bias</b></span>: "prices are just \(\theta_0\)".</p>
+      <div class="callout o frag">Choose λ with care. <b>Model selection</b> (later) gives ways to choose λ automatically.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 SECTION 3 -->
+<section class="slide sec" data-title="Part 3">
+  <div class="secwrap"><div class="secnum rise">03</div><div class="secbar rise" style="--d:.1s"></div>
+  <div class="rise" style="--d:.2s"><div class="kicker">Part 3</div><h1 class="sectitle">Regularized<br>Linear Regression</h1><p class="secsub">Gradient descent with regularization</p></div></div>
+</section>
+
+<!-- 18 GD LINEAR -->
+<section class="slide" data-title="Gradient descent">
+  <div class="kicker">Part 3 · Gradient descent</div>
+  <h2>Gradient descent with regularization</h2>
+  <div class="card" style="font-size:25px;margin-top:4px">
+    <p><b>Repeat</b> {</p>
+    <div class="eq frag" style="font-size:25px;padding-left:40px">\(\theta_0 := \theta_0-\alpha\,\dfrac{1}{m}\displaystyle\sum_{i=1}^{m}\big(h_\theta(x^{(i)})-y^{(i)}\big)x_0^{(i)}\) <span class="hw b" style="font-size:28px">&nbsp;θ₀ is not penalized</span></div>
+    <div class="eq frag" style="font-size:25px;padding-left:40px">\(\theta_j := \theta_j-\alpha\Big[\dfrac{1}{m}\displaystyle\sum_{i=1}^{m}\big(h_\theta(x^{(i)})-y^{(i)}\big)x_j^{(i)}{\color{#dc2626}\;+\;\dfrac{\lambda}{m}\theta_j}\Big]\) &nbsp;<span class="muted" style="font-size:22px">\(j=1,2,\dots,n\)</span></div>
+    <p>}</p>
+  </div>
+  <p class="frag" style="font-size:23px;margin-top:10px">The term in square brackets is exactly \(\dfrac{\partial}{\partial\theta_j}J(\theta)\) for the new, regularized \(J(\theta)\).</p>
+</section>
+
+<!-- 19 SHRINK -->
+<section class="slide" data-title="Shrinking theta">
+  <div class="kicker">Part 3 · Gradient descent</div>
+  <h2>Every step shrinks \(\theta_j\) a little</h2>
+  <div class="eq" style="font-size:30px;text-align:center">\[\theta_j := \theta_j\,{\color{#dc2626}\Big(1-\alpha\frac{\lambda}{m}\Big)}-\alpha\frac{1}{m}\sum_{i=1}^{m}\big(h_\theta(x^{(i)})-y^{(i)}\big)x_j^{(i)}\]</div>
+  <div class="cols" style="margin-top:6px">
+    <div class="stack">
+      <div class="card r frag"><h3 class="red">Shrink</h3><p>\(1-\alpha\frac{\lambda}{m}\) is a number a little less than 1, like <b>0.99</b>: \(\theta_j\) moves slightly toward zero.</p></div>
+      <div class="card b frag"><h3 class="blue">Then the usual step</h3><p>The second part is exactly the original gradient descent update.</p></div>
+    </div>
+    <div class="panel ix frag">
+      <div class="lab">learning rate α <span class="v" id="sAV"></span></div><input type="range" id="sA" min="0" max="4" step="1" value="2">
+      <div class="lab">λ <span class="v" id="sLV"></span></div><input type="range" id="sL" min="0" max="3" step="1" value="2">
+      <div class="lab">m (examples) <span class="v" id="sMV"></span></div><input type="range" id="sM" min="0" max="2" step="1" value="1">
+      <div class="read" id="sRead" style="margin-top:8px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 22 CODE LINEAR -->
+<section class="slide" data-title="Code: linear">
+  <div class="kicker">Part 3 · In Python</div>
+  <h2>Regularized linear regression in NumPy</h2>
+  <div class="cols" style="grid-template-columns:1.5fr 1fr">
+<div class="code"><span class="k">def</span> <span class="f">cost_reg</span>(theta, X, y, lam):
+    m = <span class="f">len</span>(y)
+    err = X @ theta - y
+    reg = lam * np.<span class="f">sum</span>(theta[<span class="s">1</span>:] ** <span class="s">2</span>)   <span class="c"># skip theta_0</span>
+    <span class="k">return</span> (err @ err + reg) / (<span class="s">2</span> * m)
+
+<span class="k">def</span> <span class="f">grad_reg</span>(theta, X, y, lam):
+    m = <span class="f">len</span>(y)
+    g = X.T @ (X @ theta - y) / m
+    g[<span class="s">1</span>:] += (lam / m) * theta[<span class="s">1</span>:]     <span class="c"># not theta_0</span>
+    <span class="k">return</span> g
+
+<span class="k">def</span> <span class="f">gradient_descent</span>(X, y, lam, alpha=<span class="s">0.01</span>, iters=<span class="s">1000</span>):
+    theta = np.<span class="f">zeros</span>(X.shape[<span class="s">1</span>])
+    <span class="k">for</span> _ <span class="k">in</span> <span class="f">range</span>(iters):
+        theta -= alpha * <span class="f">grad_reg</span>(theta, X, y, lam)
+    <span class="k">return</span> theta</div>
+    <div class="stack">
+      <div class="card b"><h3 class="blue">X has a column of 1s</h3><p>so <span class="mat">theta[0]</span> is \(\theta_0\), and <span class="mat">theta[1:]</span> are the penalized parameters.</p></div>
+      <div class="card g"><h3 class="green">scikit-learn</h3><p><span class="mat">Ridge(alpha=lam)</span> fits the same model. Ridge is the name for L2-regularized linear regression.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 23 SECTION 4 -->
+<section class="slide sec" data-title="Part 4">
+  <div class="secwrap"><div class="secnum rise">04</div><div class="secbar rise" style="--d:.1s"></div>
+  <div class="rise" style="--d:.2s"><div class="kicker">Part 4</div><h1 class="sectitle">Regularized<br>Logistic Regression</h1><p class="secsub">Regularized cost and gradient descent</p></div></div>
+</section>
+
+<!-- 24 LOGISTIC COST -->
+<section class="slide" data-title="Logistic cost">
+  <div class="kicker">Part 4 · Cost function</div>
+  <h2>Regularizing the logistic cost</h2>
+  <p>With high-order polynomial features, or just <b>many</b> features, logistic regression can overfit:</p>
+  <div class="eq" style="font-size:24px">\[h_\theta(x)=g\big(\theta_0+\theta_1x_1+\theta_2x_1^2+\theta_3x_1^2x_2+\theta_4x_1^2x_2^2+\theta_5x_1^2x_2^3+\cdots\big)\]</div>
+  <div class="card frag" style="margin-top:6px"><div class="eq" style="font-size:24px">\[J(\theta)=-\frac{1}{m}\sum_{i=1}^{m}\Big[y^{(i)}\log h_\theta(x^{(i)})+(1-y^{(i)})\log\big(1-h_\theta(x^{(i)})\big)\Big]{\color{#dc2626}\;+\;\frac{\lambda}{2m}\sum_{j=1}^{n}\theta_j^2}\]</div></div>
+  <div class="callout g frag" style="margin-top:14px">Even with many parameters, keeping them small gives a more reasonable decision boundary.</div>
+</section>
+
+<!-- 25 LOGISTIC DEMO -->
+<section class="slide" data-title="Try it: boundary">
+  <div class="kicker">Part 4 · Try it</div>
+  <h2>λ and the decision boundary</h2>
+  <div class="cols" style="grid-template-columns:0.85fr 1fr">
+    <div class="ix"><svg id="lgSvg" class="svgw"></svg></div>
+    <div class="stack ix">
+      <div class="panel">
+        <p style="font-size:20px">Two test scores per microchip, mapped to <b>all</b> polynomial terms up to degree 6 (28 features). <b class="red">✕</b> accepted, <b class="blue">○</b> rejected.</p>
+        <div class="btns" id="lgBtns" style="margin-top:8px"></div>
+      </div>
+      <div class="panel read" id="lgRead"></div>
+      <div class="hw" id="lgHw"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 26 GD LOGISTIC -->
+<section class="slide" data-title="GD logistic">
+  <div class="kicker">Part 4 · Gradient descent</div>
+  <h2>Gradient descent: looks the same, but isn't</h2>
+  <div class="card" style="font-size:25px">
+    <p><b>Repeat</b> {</p>
+    <p style="padding-left:40px;font-size:23px" class="muted">\(\theta_0\): same update as before (not penalized)</p>
+    <div class="eq" style="font-size:25px;padding-left:40px">\(\theta_j := \theta_j-\alpha\Big[\underbrace{\dfrac{1}{m}\displaystyle\sum_{i=1}^{m}\big(h_\theta(x^{(i)})-y^{(i)}\big)x_j^{(i)}{\color{#dc2626}\;+\;\dfrac{\lambda}{m}\theta_j}}_{\frac{\partial}{\partial\theta_j}J(\theta)}\Big]\) &nbsp;<span class="muted" style="font-size:22px">\(j=1,\dots,n\)</span></div>
+    <p>}</p>
+  </div>
+  <div class="cols" style="margin-top:14px;flex:0 0 auto;align-items:start">
+    <div class="callout o frag">Cosmetically <b>identical</b> to regularized linear regression.</div>
+    <div class="callout r frag">A <b>different</b> algorithm: here \(h_\theta(x)=\dfrac{1}{1+e^{-\theta^Tx}}\).</div>
+  </div>
+</section>
+
+<!-- 29 SUMMARY -->
+<section class="slide" data-title="Summary">
+  <div class="kicker">Wrap-up</div>
+  <h2>Key takeaways</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card b frag"><p><b class="blue">1.</b> <b>Underfit</b> = high bias; <b>overfit</b> = high variance: fits training data, fails on new examples.</p></div>
+    <div class="card r frag"><p><b class="red">2.</b> Fix overfitting by <b>reducing features</b> or by <b>regularization</b> (keep features, shrink θ).</p></div>
+    <div class="card g frag"><p><b class="green">3.</b> Add \(\frac{\lambda}{2m}\sum_{j=1}^{n}\theta_j^2\) to the cost. \(\theta_0\) is not penalized.</p></div>
+    <div class="card o frag"><p><b class="orange">4.</b> λ too small → still overfits; λ too large → underfits.</p></div>
+    <div class="card p frag"><p><b class="purple">5.</b> Gradient step: \(\theta_j\) shrinks by \(1-\alpha\frac{\lambda}{m}\), then the usual update.</p></div>
+    <div class="card frag"><p><b class="blue">6.</b> Logistic regression: same update form, but \(h_\theta\) is the sigmoid.</p></div>
+  </div>
+  <div class="callout g frag" style="margin-top:14px">With linear regression, logistic regression, gradient descent and regularization, you can already apply ML to <b>many real problems</b>. Next: more powerful <b>non-linear classifiers</b>.</div>
+</section>
+
+<!-- 30 QUIZ A -->
+<section class="slide" data-title="Quiz 1">
+  <div class="kicker">Check your understanding · 1 / 3</div>
+  <h2>Quiz</h2>
+  <div class="cols" style="grid-template-columns:1.35fr 1fr">
+    <div class="mcq stack ix multi q1" style="gap:7px"><p style="font-size:22px"><b>Q1.</b> You are training a classifier with logistic regression. Which statements are true? <span class="muted">Check all that apply.</span></p>
+      <button data-ok="1">Adding a new feature always results in equal or better performance on the training set.</button>
+      <button>Adding many new features helps prevent overfitting on the training set.</button>
+      <button>Introducing regularization always results in equal or better performance on examples not in the training set.</button>
+      <button>Introducing regularization always results in equal or better performance on the training set.</button>
+      <button class="btn primary chk">Check</button>
+      <div class="why">Only the first: extra features never worsen the training fit (but can overfit). Regularization usually <b>raises</b> training error, and helps on new data only if λ is well chosen.</div></div>
+    <div class="mcq stack ix" style="gap:8px"><p style="font-size:22px"><b>Q2.</b> You ran logistic regression with λ = 0 and with λ = 1, and got the two results below. Which one is λ = 1?</p>
+      <button data-ok="1">\(\theta=\begin{bmatrix}1.37\\0.51\end{bmatrix}\)</button>
+      <button>\(\theta=\begin{bmatrix}74.81\\45.05\end{bmatrix}\)</button>
+      <div class="why">Correct: regularization shrinks θ, so the smaller values come from λ = 1.</div></div>
+  </div>
+</section>
+
+<!-- 31 QUIZ B -->
+<section class="slide" data-title="Quiz 2">
+  <div class="kicker">Check your understanding · 2 / 3</div>
+  <h2>Quiz</h2>
+  <div class="mcq stack ix multi" style="gap:9px"><p style="font-size:22px"><b>Q3.</b> Which statements about regularization are true? <span class="muted">Check all that apply.</span></p>
+    <button>Using a very large λ cannot hurt the performance of your hypothesis; the only reason we do not set λ too large is to avoid numerical problems.</button>
+    <button>Because logistic regression outputs \(0\le h_\theta(x)\le1\), its range of outputs can only be "shrunk" slightly by regularization, so regularization is generally not helpful for it.</button>
+    <button>Because regularization makes \(J(\theta)\) no longer convex, gradient descent may not always converge to the global minimum (when \(\lambda>0\) and α is appropriate).</button>
+    <button data-ok="1">Using too large a value of λ can cause your hypothesis to underfit the data.</button>
+    <button class="btn primary chk">Check</button>
+    <div class="why">Only the last one is true. A huge λ pushes θ₁…θₙ to 0 (underfitting). Regularization does help logistic regression, and adding \(\frac{\lambda}{2m}\sum\theta_j^2\) keeps \(J(\theta)\) convex.</div></div>
+</section>
+
+<!-- 32 QUIZ C -->
+<section class="slide" data-title="Quiz 3">
+  <div class="kicker">Check your understanding · 3 / 3</div>
+  <h2>Quiz</h2>
+  <div class="mcq stack ix" style="gap:6px"><p style="font-size:22px"><b>Q4.</b> In which figure has the hypothesis <b>overfit</b> the training set?</p>
+    <div class="mini" id="q4"></div><div class="why">Correct: the curve passes through every training point but swings wildly between them.</div></div>
+  <div class="mcq stack ix" style="gap:6px;margin-top:10px"><p style="font-size:22px"><b>Q5.</b> In which figure has the hypothesis <b>underfit</b> the training set?</p>
+    <div class="mini" id="q5"></div><div class="why">Correct: a straight line cannot follow the curve in the data, even on the training set.</div></div>
+</section>
+
+<!-- 33 END -->
+<section class="slide sec" data-title="End">
+  <div class="secwrap"><div class="secbar rise"></div>
+  <div class="rise" style="--d:.1s"><div class="kicker">MEAI502 · Chapter 4</div><h1 class="sectitle">Thank you</h1><p class="secsub">Questions?</p><p class="muted" style="font-size:21px;margin-top:22px">Dr. Naila Marir · namarir@effatuniversity.edu.sa</p></div></div>
+</section>
+<div class="foot"><span>MEAI502 · Applied Machine Learning · Ch 4 Regularization</span><span id="fnum"></span></div>
+<div class="prog" id="prog"></div>
+</div>
+<div class="navui"><button id="bPrev" title="Previous (←)">‹ Back</button><span class="cnt" id="cnt"></span><button id="bNext" title="Next (→)">Next ›</button><button id="bFs" title="Fullscreen (F)">⛶</button></div>
+<div class="hint" id="hint">→ / Space / click: next step &nbsp;·&nbsp; ← / Back: previous slide &nbsp;·&nbsp; F: fullscreen</div>
+<script>
+
+const $=s=>document.querySelector(s);
+const NS='http://www.w3.org/2000/svg';
+let CID=0;
+function el(t,a,p){const e=document.createElementNS(NS,t);if(a)for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function txt(p,x,y,s,a){const t=el('text',Object.assign({x,y},a||{}),p);t.textContent=s;return t}
+function clear(g){while(g.firstChild)g.removeChild(g.firstChild)}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function gauss(r){let u=0;while(!u)u=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*r())}
+const sig=z=>1/(1+Math.exp(-z));
+const fx=(v,d=2)=>(Math.abs(v)<1e-9?0:v).toFixed(d);
+function svgPt(svg,e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+
+function axes(svg,o){
+  svg.setAttribute('viewBox',`0 0 ${o.W} ${o.H}`);
+  const pw=o.W-o.l-o.r, ph=o.H-o.t-o.b;
+  const sx=v=>o.l+(v-o.x[0])/(o.x[1]-o.x[0])*pw;
+  const sy=v=>o.t+ph-(v-o.y[0])/(o.y[1]-o.y[0])*ph;
+  const ix=p=>o.x[0]+(p-o.l)/pw*(o.x[1]-o.x[0]);
+  const iy=p=>o.y[0]+(o.t+ph-p)/ph*(o.y[1]-o.y[0]);
+  const id='cp'+(++CID);
+  const cp=el('clipPath',{id},svg); el('rect',{x:o.l,y:o.t,width:pw,height:ph},cp);
+  const g=el('g',{},svg);
+  (o.xt||[]).forEach((v,k)=>{if(o.grid!==false)el('line',{x1:sx(v),x2:sx(v),y1:o.t,y2:o.t+ph,class:'grid'},g);txt(g,sx(v),o.t+ph+24,o.xtl?o.xtl[k]:v,{class:'tick','text-anchor':'middle'})});
+  (o.yt||[]).forEach((v,k)=>{if(o.grid!==false)el('line',{x1:o.l,x2:o.l+pw,y1:sy(v),y2:sy(v),class:'grid'},g);txt(g,o.l-10,sy(v)+5,o.ytl?o.ytl[k]:v,{class:'tick','text-anchor':'end'})});
+  const layer=el('g',{'clip-path':`url(#${id})`},svg);
+  const bg=el('g',{},layer), dyn=el('g',{},layer);
+  const ag=el('g',{},svg);
+  el('line',{x1:o.l,y1:o.t+ph,x2:o.l+pw+12,y2:o.t+ph,class:'axis','marker-end':'url(#arr)'},ag);
+  el('line',{x1:o.l,y1:o.t+ph,x2:o.l,y2:o.t-12,class:'axis','marker-end':'url(#arr)'},ag);
+  if(o.xl)txt(ag,o.l+pw/2,o.H-6,o.xl,{class:'alab','text-anchor':'middle'});
+  if(o.yl){const yy=o.t+ph/2;txt(ag,18,yy,o.yl,{class:'alab','text-anchor':'middle',transform:`rotate(-90 18 ${yy})`})}
+  const top=el('g',{},svg);
+  return {o,sx,sy,ix,iy,pw,ph,bg,dyn,top,svg};
+}
+function mO(g,x,y,r=8,c='ox'){return el('circle',{cx:x,cy:y,r,class:c},g)}
+function mX(g,x,y,s=8,c='xx'){const q=el('g',{class:c},g);el('line',{x1:x-s,y1:y-s,x2:x+s,y2:y+s},q);el('line',{x1:x-s,y1:y+s,x2:x+s,y2:y-s},q);return q}
+function mT(g,x,y,s=10,c='tri'){return el('path',{d:`M${x},${y-s} L${x+s*.95},${y+s*.72} L${x-s*.95},${y+s*.72} Z`,class:c},g)}
+function mS(g,x,y,s=8,c='sq'){return el('rect',{x:x-s,y:y-s,width:2*s,height:2*s,class:c},g)}
+function shade(A,fn,col,N=150){
+  const c=document.createElement('canvas');c.width=N;c.height=N;const ctx=c.getContext('2d');const im=ctx.createImageData(N,N);const o=A.o;
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){const x=o.x[0]+(i+.5)/N*(o.x[1]-o.x[0]),y=o.y[1]-(j+.5)/N*(o.y[1]-o.y[0]);const k=(j*N+i)*4;const cc=col(fn(x,y));im.data[k]=cc[0];im.data[k+1]=cc[1];im.data[k+2]=cc[2];im.data[k+3]=255}
+  ctx.putImageData(im,0,0);
+  if(!A.img)A.img=el('image',{x:o.l,y:o.t,width:A.pw,height:A.ph,preserveAspectRatio:'none'},A.bg);
+  A.img.setAttribute('href',c.toDataURL());
+}
+function mix(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t]}
+const W3=[255,255,255], RS=[252,205,205], BS=[200,216,255], GS=[200,240,212];
+function probCol(p){const t=Math.min(1,Math.pow(Math.abs(p-.5)*2,.75));return p>=.5?mix(W3,RS,t):mix(W3,BS,t)}
+function lineInBox(A,a,b,c,cls){ // a + b*x + c*y = 0
+  const o=A.o;let p;
+  if(Math.abs(c)>1e-6){const y=x=>-(a+b*x)/c;p=[[o.x[0],y(o.x[0])],[o.x[1],y(o.x[1])]]}
+  else if(Math.abs(b)>1e-6){const x=-a/b;p=[[x,o.y[0]],[x,o.y[1]]]} else return null;
+  return el('line',{x1:A.sx(p[0][0]),y1:A.sy(p[0][1]),x2:A.sx(p[1][0]),y2:A.sy(p[1][1]),class:cls||'bnd'},A.dyn);
+}
+
+const MATHOPT={delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false};
+const LG={"pts":[[-0.724,0.073,0],[-0.938,-0.682,0],[-0.849,-0.721,0],[0.337,-0.207,1],[0.425,-0.408,0],[0.694,0.441,0],[0.756,0.181,0],[-0.56,0.191,1],[-0.24,0.272,1],[0.725,0.865,0],[0.004,-0.404,0],[0.926,-0.076,0],[0.448,-0.565,0],[-0.533,-0.929,0],[-0.257,0.008,1],[0.499,-0.27,1],[-0.656,1.142,0],[0.486,-0.882,1],[0.819,0.264,0],[-0.318,-0.808,0],[-0.947,0.804,0],[-0.727,0.589,0],[-0.867,0.287,0],[-0.942,0.731,0],[-0.8,-0.961,0],[0.563,0.06,1],[-0.533,-0.322,0],[1.103,1.023,0],[-0.063,-0.324,1],[-0.914,-0.855,0],[-0.473,0.817,0],[0.173,0.422,1],[0.679,0.994,0],[0.346,-0.691,0],[0.691,0.924,0],[-0.924,-0.227,0],[1.147,-0.69,0],[-0.232,-0.869,0],[0.368,-0.657,0],[-0.831,0.314,0],[-0.917,-0.752,0],[0.37,-0.302,1],[-0.243,-0.719,0],[-0.15,0.962,1],[-0.815,0.207,0],[0.951,0.506,1],[0.734,0.469,0],[-0.0,-0.894,0],[0.545,0.73,0],[-0.425,0.698,0],[-0.704,-0.161,0],[-0.385,0.302,1],[-0.484,0.339,1],[0.58,-0.376,0],[-0.108,0.189,1],[0.115,-0.446,1],[-0.793,-0.301,0],[-0.938,-0.667,0],[0.685,0.369,0],[0.624,-0.358,0],[-0.269,0.612,0],[-0.671,0.884,0],[0.601,0.203,1],[-0.037,0.216,0],[0.193,0.751,0],[0.727,0.067,0],[-0.767,0.883,0],[-0.804,0.332,0],[-0.079,0.832,0],[0.326,-0.11,1],[0.074,-0.712,0],[0.854,-0.632,1],[-0.855,-0.011,0],[-0.905,1.13,0],[-0.742,-0.1,0],[0.535,0.164,1],[-0.451,0.864,0],[-0.062,-0.128,1],[1.087,-0.829,0],[-0.221,0.092,0],[-0.885,-0.528,0],[0.589,0.311,0],[-0.903,-0.028,0],[0.967,-0.215,0],[0.998,-0.126,0],[-0.215,-0.67,0],[-0.814,0.426,0],[0.968,-0.037,1],[0.94,0.871,0],[0.277,0.448,1],[-0.606,-0.373,0],[-0.301,0.487,0],[-0.035,1.08,0],[0.047,-0.657,0],[0.051,-0.286,1],[0.277,-0.142,1],[-0.93,-0.159,0],[0.115,0.935,0],[1.013,0.719,0],[0.126,-0.146,1],[-0.911,0.717,0],[-0.937,0.003,0],[-0.063,-0.217,1],[-0.65,-0.976,0],[0.14,0.862,0],[0.69,-0.961,1],[0.287,-0.514,1],[-0.725,-0.194,0],[0.212,0.908,0],[-0.604,0.243,0],[-0.173,-0.318,1],[-0.891,0.192,0],[0.611,1.059,0],[0.411,-0.05,1],[0.912,0.604,0],[0.766,0.973,0],[-0.966,-0.573,0],[0.478,-0.057,1]],"fits":{"0":{"t":[5.0771,76.0069,-6.673,164.1057,89.8597,-6.8624,-636.3321,231.7708,-255.3709,15.7492,-297.2378,-432.5241,-443.8159,-364.9982,-134.276,1268.6039,-446.4801,819.6309,-757.1444,537.3146,144.3826,-563.6998,743.9875,29.5546,808.2323,-911.022,-572.4611,-41.2589],"acc":96.6,"norm":2690.11},"0.01":{"t":[2.5607,0.4427,0.7515,-6.8481,-2.4317,-10.8151,-0.62,-1.6288,3.9543,2.0784,-1.5293,-1.8596,0.1299,-6.018,1.7693,5.8006,4.0468,4.1427,-6.7818,0.6551,-1.3897,-0.0106,8.2904,-1.6489,0.5797,-3.6139,-5.8886,2.9099],"acc":89.8,"norm":21.96},"0.1":{"t":[1.4007,0.497,0.4944,-3.9179,-1.7745,-5.1619,1.074,-0.5854,1.2907,0.0484,-1.4819,0.3377,-0.1623,-1.9045,-0.3394,1.7242,1.144,0.955,-1.479,1.1221,-0.3954,-0.3287,2.0442,-0.1059,-0.0302,-0.0205,-2.0746,1.6967],"acc":89.0,"norm":8.67},"1":{"t":[0.334,0.7603,0.0531,-1.458,-0.672,-1.5236,0.4606,-0.252,0.3185,-0.1559,-0.9674,-0.0339,-0.2272,-0.5628,-0.5911,0.3283,0.0721,0.1576,-0.3416,0.2865,-0.2548,-0.6695,0.2618,-0.147,-0.1065,-0.0511,-0.5499,-0.101],"acc":83.9,"norm":2.97},"10":{"t":[-0.4322,0.3728,-0.1137,-0.4101,-0.1715,-0.3567,0.1757,-0.0552,0.0814,-0.1033,-0.3448,-0.0461,-0.1492,-0.1263,-0.2413,0.089,0.0021,0.0273,-0.0652,0.0522,-0.1084,-0.2915,0.007,-0.1156,-0.0421,-0.094,-0.1095,-0.1705],"acc":72.9,"norm":0.96},"100":{"t":[-0.877,0.0711,-0.0307,-0.0637,-0.0262,-0.0554,0.0371,-0.0117,0.0169,-0.0262,-0.0562,-0.0107,-0.0308,-0.0182,-0.0443,0.0213,-0.0039,0.0072,-0.0134,0.0105,-0.0266,-0.049,-0.0045,-0.0248,-0.0083,-0.0226,-0.0145,-0.0373],"acc":72.9,"norm":0.17}}};
+
+/* ---------- polynomial helpers ---------- */
+function solve(A,b){const n=b.length;const M=A.map((r,i)=>r.concat([b[i]]));
+  for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;[M[c],M[p]]=[M[p],M[c]];
+    for(let r=0;r<n;r++){if(r===c)continue;const f=M[r][c]/M[c][c];for(let k=c;k<=n;k++)M[r][k]-=f*M[c][k]}}
+  return M.map((r,i)=>r[n]/r[i])}
+/* fit y ~ sum th_k u^k, u=(x-c)/s, with penalty pen[k]*th_k^2 (penalty scaled like lambda/(2m)*... => normal eq: (A'A + diag(pen)) th = A'y) */
+function polyfit(pts,deg,pen,c,s){
+  const A=[],b=[];for(let i=0;i<=deg;i++){A.push(new Array(deg+1).fill(0));b.push(0)}
+  pts.forEach(([x,y])=>{const u=(x-c)/s;const p=[];for(let k=0;k<=deg;k++)p.push(Math.pow(u,k));
+    for(let i=0;i<=deg;i++){b[i]+=p[i]*y;for(let j=0;j<=deg;j++)A[i][j]+=p[i]*p[j]}});
+  for(let i=0;i<=deg;i++)A[i][i]+=(pen?pen[i]:0)+1e-10;
+  const th=solve(A,b);return {th,f:x=>{const u=(x-c)/s;let v=0;for(let k=deg;k>=0;k--)v=v*u+th[k];return v}}}
+function pathOf(A,f,x0,x1,N=240){let d='';for(let i=0;i<=N;i++){const x=x0+(x1-x0)*i/N;let y=f(x);y=Math.max(-50,Math.min(50,y));d+=(i?'L':'M')+A.sx(x).toFixed(1)+','+A.sy(y).toFixed(1)}return d}
+const mse=(pts,f)=>pts.reduce((a,[x,y])=>a+(f(x)-y)**2,0)/pts.length;
+
+/* housing data */
+const H5=[[0.7,1.0],[1.4,2.7],[2.2,2.5],[3.0,3.6],[3.8,3.3]];
+const HC=2.25,HS=1.6;
+const HO=g=>({W:420,H:330,l:44,r:12,t:12,b:40,x:[0,4.5],y:[0,4.6],xt:[],yt:[],grid:false,xl:'Size',yl:'Price'});
+
+/* ---------- Title art ---------- */
+(function(){
+  const svg=$('#titleSvg');
+  const A=axes(svg,{W:520,H:440,l:46,r:16,t:20,b:46,x:[0,4.5],y:[0,4.6],xt:[],yt:[],grid:false,xl:'Size',yl:'Price'});
+  const over=polyfit(H5,4,null,HC,HS), good=polyfit(H5,4,[0,.3,.3,.3,.3],HC,HS);
+  el('path',{d:pathOf(A,over.f,0.2,4.3),class:'curve drawme',pathLength:1,style:'stroke-dasharray:1;stroke-dashoffset:1;stroke:#1d4ed8;opacity:.55'},A.top);
+  el('path',{d:pathOf(A,good.f,0.2,4.3),class:'curve drawme2',pathLength:1,style:'stroke-dasharray:1;stroke-dashoffset:1;stroke:#7c3aed;stroke-width:5'},A.top);
+  H5.forEach((p,i)=>{const g=mX(A.top,A.sx(p[0]),A.sy(p[1]),10);g.setAttribute('class','xx rise');g.style.setProperty('--d',(.3+i*.08)+'s')});
+  txt(A.top,A.sx(4.4),A.sy(4.3),'λ = 0',{class:'hwt',fill:'#1d4ed8','text-anchor':'end'});
+  txt(A.top,A.sx(4.4),A.sy(2.75),'λ > 0',{class:'hwt',fill:'#7c3aed','text-anchor':'end'});
+  const s=document.createElement('style');s.textContent='.slide.active .drawme{animation:draw 1.6s .5s ease forwards}.slide.active .drawme2{animation:draw 1.6s 1.6s ease forwards}';document.head.appendChild(s);
+})();
+
+/* ---------- Housing three fits ---------- */
+[['#h1Svg',1,'#dc2626'],['#h2Svg',2,'#16a34a'],['#h3Svg',4,'#1d4ed8']].forEach(([id,d,col],k)=>{
+  const svg=$(id);const A=axes(svg,HO());
+  const f=polyfit(H5,d,null,HC,HS).f;
+  el('path',{d:pathOf(A,f,0.15,4.4),class:'curve frag drawp','data-o':2*k,pathLength:1,style:`stroke:${col}`},A.top);
+  H5.forEach(p=>mX(A.top,A.sx(p[0]),A.sy(p[1]),9));
+  if(d===4){const m=el('g',{class:'frag','data-o':5},A.top);
+    mT(m,A.sx(4.25),A.sy(3.6),11);txt(m,A.sx(4.25)-14,A.sy(3.6)-16,'new house',{class:'hwt',fill:'#16a34a','text-anchor':'end','font-size':24});}
+});
+
+/* ---------- Degree demo ---------- */
+const TRUE=x=>4.2*(1-Math.exp(-0.75*x));
+const TR=(()=>{const r=rng(2);return [0.45,0.85,1.3,1.75,2.2,2.7,3.15,3.6,4.1].map(x=>[x,TRUE(x)+gauss(r)*0.28])})();
+const TE=(()=>{const r=rng(21);return [0.65,1.05,1.55,2.0,2.45,2.95,3.4,3.85,4.3].map(x=>[x,TRUE(x)+gauss(r)*0.28])})();
+const DC=2.3,DS=1.9;
+function fitPanel(svg){return axes(svg,{W:740,H:500,l:56,r:20,t:16,b:52,x:[0,4.6],y:[0,5.2],xt:[0,1,2,3,4],yt:[0,1,2,3,4,5],xl:'Size (1000 ft²)',yl:'Price ($100k)'})}
+(function(){
+  const A=fitPanel($('#degSvg'));
+  const path=el('path',{class:'curve',style:'stroke:#7c3aed'},A.dyn);
+  const tg=el('g',{},A.top);
+  TE.forEach(p=>mT(tg,A.sx(p[0]),A.sy(p[1]),9));TR.forEach(p=>mX(tg,A.sx(p[0]),A.sy(p[1]),9));
+  const names={1:'underfit (high bias)',2:'just right',3:'just right',8:'overfit (high variance)'};
+  function upd(){const d=+$('#degS').value;$('#degV').textContent=d;
+    const F=polyfit(TR,d,null,DC,DS).f;path.setAttribute('d',pathOf(A,F,0.05,4.55));
+    const a=mse(TR,F),b=mse(TE,F),cap=v=>Math.min(100,v/0.6*100);
+    $('#trB').style.width=cap(a)+'%';$('#teB').style.width=cap(b)+'%';
+    $('#trV').textContent=a.toFixed(3);$('#teV').textContent=b>99?'>99':b.toFixed(2);
+    const n=names[d]||(d>=6?'overfitting':'');
+    $('#degRead').innerHTML=`${d+1} parameters θ₀…θ${'₀₁₂₃₄₅₆₇₈'[d]}<br><b style="color:${d===1?'#dc2626':d>=6?'#1d4ed8':'#16a34a'}">${n}</b>`;}
+  $('#degS').addEventListener('input',upd);upd();
+})();
+
+/* ---------- Logistic three panels ---------- */
+(function(){
+  const r=rng(9),D=[];
+  for(let i=0;i<34;i++){const a=r()*6.283,rr=Math.sqrt(r());const x=rr*Math.cos(a)*1.05,y=rr*Math.sin(a)*0.8;D.push([x,y,(x*x/1.05+y*y/0.62)<0.55?1:0])}
+  D.push([0.55,0.05,0],[-0.5,-0.15,0],[0.75,-0.45,1]);
+  const bnds=[
+    t=>[0.15,1,0.35],                          // straight line coefficients a+b*x+c*y
+    null,null];
+  ['#l1Svg','#l2Svg','#l3Svg'].forEach((id,k)=>{
+    const svg=$(id);const A=axes(svg,{W:420,H:330,l:40,r:12,t:12,b:38,x:[-1.2,1.2],y:[-1,1],xt:[],yt:[],grid:false,xl:'x₁',yl:'x₂'});
+    let d='';
+    if(k===0){d=`M${A.sx(-0.55)},${A.sy(1)} L${A.sx(0.25)},${A.sy(-1)}`}
+    else if(k===1){for(let i=0;i<=100;i++){const a=i/100*6.283;d+=(i?'L':'M')+A.sx(0.76*Math.cos(a))+','+A.sy(0.58*Math.sin(a))}}
+    else{for(let i=0;i<=200;i++){const a=i/200*6.283;const rr=1+0.22*Math.sin(5*a)+0.12*Math.sin(9*a+1);d+=(i?'L':'M')+A.sx(0.7*rr*Math.cos(a))+','+A.sy(0.55*rr*Math.sin(a))}}
+    el('path',{d,class:'bnd frag drawp','data-o':2*k,pathLength:1},A.top);
+    D.forEach(p=>p[2]?mX(A.top,A.sx(p[0]),A.sy(p[1]),7):mO(A.top,A.sx(p[0]),A.sy(p[1]),7));
+  });
+})();
+
+/* ---------- Penalize theta3, theta4 ---------- */
+(function(){
+  const A=axes($('#pSvg'),{W:620,H:470,l:56,r:18,t:14,b:50,x:[0,4.5],y:[0,4.6],xt:[],yt:[],grid:false,xl:'Size',yl:'Price'});
+  const q=polyfit(H5,2,null,HC,HS).f;
+  el('path',{d:pathOf(A,q,0.15,4.4),class:'curve',style:'stroke:#16a34a;stroke-dasharray:8 8;stroke-width:3'},A.bg);
+  txt(A.bg,A.sx(4.4),A.sy(3.1),'quadratic',{class:'hwt',fill:'#16a34a','text-anchor':'end','font-size':26});
+  const path=el('path',{class:'curve',style:'stroke:#1d4ed8'},A.dyn);
+  H5.forEach(p=>mX(A.top,A.sx(p[0]),A.sy(p[1]),9));
+  const Ws=[0,1,10,100,1000];
+  function upd(){const W=Ws[+$('#pS').value];$('#pV').textContent=W;
+    const F=polyfit(H5,4,[0,0,0,W*2*5,W*2*5],HC,HS);  // 2m*W so that W matches the cost scale (m=5)
+    path.setAttribute('d',pathOf(A,F.f,0.15,4.4));
+    $('#pRead').innerHTML=`θ₃ = <b>${fx(F.th[3],3)}</b> &nbsp; θ₄ = <b>${fx(F.th[4],3)}</b>`;}
+  $('#pS').addEventListener('input',upd);upd();
+})();
+
+/* ---------- Lambda demo ---------- */
+(function(){
+  const A=fitPanel($('#lamSvg'));
+  const path=el('path',{class:'curve',style:'stroke:#7c3aed'},A.dyn);
+  const tg=el('g',{},A.top);TE.forEach(p=>mT(tg,A.sx(p[0]),A.sy(p[1]),9));TR.forEach(p=>mX(tg,A.sx(p[0]),A.sy(p[1]),9));
+  const L=[0,0.0001,0.001,0.01,0.1,1,10,100,1000,1e10];const m=TR.length;
+  function upd(){const i=+$('#lamS').value,lam=L[i];$('#lamV').textContent=lam>=1e10?'10¹⁰':lam;
+    const pen=[0].concat(new Array(8).fill(lam));      // (X'X + lambda*L): theta_0 not penalized
+    const F=polyfit(TR,8,pen,DC,DS);path.setAttribute('d',pathOf(A,F.f,0.05,4.55));
+    const a=mse(TR,F.f),b=mse(TE,F.f),cap=v=>Math.min(100,v/1.6*100);
+    $('#ltrB').style.width=cap(a)+'%';$('#lteB').style.width=cap(b)+'%';$('#ltrV').textContent=a.toFixed(3);$('#lteV').textContent=b>99?'>99':b.toFixed(2);
+    const nrm=Math.sqrt(F.th.slice(1).reduce((s,v)=>s+v*v,0));
+    const st=i<=1?['overfit: wiggly','#1d4ed8']:i<=6?['smooth: generalizes','#16a34a']:['underfit: flat line θ₀','#dc2626'];
+    $('#lamRead').innerHTML=`‖θ₁…θ₈‖ = <b>${nrm>999?nrm.toExponential(1):nrm.toFixed(2)}</b><br><b style="color:${st[1]}">${st[0]}</b>`;}
+  $('#lamS').addEventListener('input',upd);
+  document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{$('#lamS').value=b.dataset.l;upd()});
+  upd();
+})();
+
+/* ---------- Shrink factor ---------- */
+(function(){
+  const AL=[0.001,0.003,0.01,0.03,0.1],LA=[0,1,10,100],M=[100,1000,10000];
+  function upd(){const a=AL[+$('#sA').value],l=LA[+$('#sL').value],m=M[+$('#sM').value];
+    $('#sAV').textContent=a;$('#sLV').textContent=l;$('#sMV').textContent=m;
+    const f=1-a*l/m;
+    $('#sRead').innerHTML=`1 − αλ/m = <b style="color:#dc2626;font-size:26px">${f.toFixed(5).replace(/0+$/,'').replace(/\.$/,'')}</b><br>after 100 steps (shrink only): θⱼ × <b>${Math.pow(f,100).toFixed(4)}</b>`;}
+  ['#sA','#sL','#sM'].forEach(s=>$(s).addEventListener('input',upd));upd();
+})();
+
+/* ---------- Logistic lambda demo ---------- */
+(function(){
+  const svg=$('#lgSvg');
+  const A=axes(svg,{W:600,H:530,l:56,r:18,t:14,b:52,x:[-1,1.15],y:[-1,1.15],xt:[-1,-0.5,0,0.5,1],yt:[-1,-0.5,0,0.5,1],xl:'Test 1',yl:'Test 2'});
+  const feats=(a,b)=>{const o=[1];for(let i=1;i<=6;i++)for(let j=0;j<=i;j++)o.push(Math.pow(a,i-j)*Math.pow(b,j));return o};
+  const z=(t,a,b)=>{const f=feats(a,b);let s=0;for(let k=0;k<f.length;k++)s+=t[k]*f[k];return s};
+  const bline=el('g',{},A.top);const pg=el('g',{},A.top);
+  LG.pts.forEach(p=>p[2]?mX(pg,A.sx(p[0]),A.sy(p[1]),7):mO(pg,A.sx(p[0]),A.sy(p[1]),7));
+  function contour(t){clear(bline);const N=150,o=A.o,xs=[],ys=[],G=[];
+    for(let i=0;i<=N;i++){xs.push(o.x[0]+(o.x[1]-o.x[0])*i/N);ys.push(o.y[0]+(o.y[1]-o.y[0])*i/N)}
+    for(let j=0;j<=N;j++){G.push([]);for(let i=0;i<=N;i++)G[j].push(z(t,xs[i],ys[j]))}
+    let d='';const ip=(a,b,va,vb)=>a+(b-a)*(va/(va-vb));
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){const v=[G[j][i],G[j][i+1],G[j+1][i+1],G[j+1][i]];
+      const P=[];
+      if((v[0]>0)!==(v[1]>0))P.push([ip(xs[i],xs[i+1],v[0],v[1]),ys[j]]);
+      if((v[1]>0)!==(v[2]>0))P.push([xs[i+1],ip(ys[j],ys[j+1],v[1],v[2])]);
+      if((v[3]>0)!==(v[2]>0))P.push([ip(xs[i],xs[i+1],v[3],v[2]),ys[j+1]]);
+      if((v[0]>0)!==(v[3]>0))P.push([xs[i],ip(ys[j],ys[j+1],v[0],v[3])]);
+      for(let k=0;k+1<P.length;k+=2)d+=`M${A.sx(P[k][0]).toFixed(1)},${A.sy(P[k][1]).toFixed(1)}L${A.sx(P[k+1][0]).toFixed(1)},${A.sy(P[k+1][1]).toFixed(1)}`}
+    el('path',{d,class:'bnd',style:'stroke-width:3.5'},bline)}
+  const keys=['0','0.01','0.1','1','10','100'];
+  const msg={'0':['overfit: contorted boundary','#1d4ed8'],'0.01':['still quite wiggly','#1d4ed8'],'0.1':['smoother','#16a34a'],'1':['just right','#16a34a'],'10':['underfit: too simple','#dc2626'],'100':['underfit: predicts mostly one class','#dc2626']};
+  function show(k){const F=LG.fits[k];
+    shade(A,(a,b)=>sig(z(F.t,a,b)),p=>p>=.5?[252,222,222]:[222,232,255],120);contour(F.t);
+    document.querySelectorAll('#lgBtns .btn').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+    $('#lgRead').innerHTML=`λ = <b>${k}</b><br>training accuracy: <b>${F.acc}%</b><br>‖θ₁…θ₂₇‖ = <b>${F.norm}</b>`;
+    $('#lgHw').textContent=msg[k][0];$('#lgHw').style.color=msg[k][1];}
+  keys.forEach(k=>{const b=document.createElement('button');b.className='btn';b.dataset.k=k;b.textContent='λ = '+k;b.onclick=()=>show(k);$('#lgBtns').appendChild(b)});
+  show('1');
+})();
+
+/* ---------- Quiz figures Q4/Q5 ---------- */
+(function(){
+  const P=[[0.6,1.0],[1.2,2.35],[1.9,2.95],[2.6,3.35],[3.3,3.25],[3.9,3.45]];
+  const fig={under:polyfit(P,1,null,2.25,1.7).f,good:polyfit(P,2,null,2.25,1.7).f,over:polyfit(P,5,null,2.25,1.7).f,cubic:polyfit(P,3,null,2.25,1.7).f};
+  function build(id,order,ok){
+    const box=$(id);
+    order.forEach((k,i)=>{const b=document.createElement('button');b.className='qopt';if(k===ok)b.dataset.ok=1;
+      b.innerHTML=`<div style="font-weight:800;font-size:19px;margin:0 0 0 6px">${'ABCD'[i]}</div>`;
+      const svg=document.createElementNS(NS,'svg');svg.setAttribute('class','svgw');b.appendChild(svg);
+      const A=axes(svg,{W:280,H:150,l:18,r:10,t:8,b:16,x:[0,4.5],y:[0,4.8],xt:[],yt:[],grid:false});
+      el('path',{d:pathOf(A,fig[k],0.2,4.3),class:'curve',style:'stroke:#7c3aed;stroke-width:3'},A.top);
+      P.forEach(p=>mX(A.top,A.sx(p[0]),A.sy(p[1]),6));
+      box.appendChild(b)});
+  }
+  build('#q4',['good','under','over','cubic'],'over');
+  build('#q5',['over','cubic','good','under'],'under');
+})();
+
+/* ---------- MCQ (single + multi) ---------- */
+document.querySelectorAll('.mcq').forEach(m=>{
+  const opts=[...m.querySelectorAll('button')].filter(b=>!b.classList.contains('chk'));
+  const why=m.querySelector('.why');
+  if(m.classList.contains('multi')){
+    opts.forEach(b=>b.onclick=()=>{opts.forEach(x=>x.classList.remove('right','wrong'));b.classList.toggle('sel')});
+    m.querySelector('.chk').onclick=()=>{let ok=true;opts.forEach(b=>{const s=b.classList.contains('sel'),r=!!b.dataset.ok;
+        b.classList.remove('right','wrong');if(s&&r)b.classList.add('right');else if(s&&!r){b.classList.add('wrong');ok=false}else if(!s&&r)ok=false});
+      why.classList.toggle('no',!ok);why.innerHTML=(ok?'Correct! ':'Not quite. ')+why.dataset.t;why.classList.add('show');
+      if(window.renderMathInElement)renderMathInElement(why,MATHOPT)};
+    why.dataset.t=why.innerHTML;
+  } else opts.forEach(b=>b.onclick=()=>{b.classList.add(b.dataset.ok?'right':'wrong');if(b.dataset.ok)why.classList.add('show')});
+});
+
+/* ---------- Auto-fit: enlarge each content slide to fill the space ---------- */
+function autoFit(){
+  const AW=1152, AH=720-34-74;
+  document.querySelectorAll('.slide:not(.title):not(.sec)').forEach(s=>{
+    let w=s.querySelector(':scope > .fitw');
+    if(!w){w=document.createElement('div');w.className='fitw';while(s.firstChild)w.appendChild(s.firstChild);s.appendChild(w)}
+    const wasActive=s.classList.contains('active');s.style.display='flex';s.style.visibility='hidden';s.classList.add('measuring');
+    let z=1.32;
+    for(;z>0.8;z-=0.02){w.style.zoom=z;w.style.width=(AW/z)+'px';if(w.scrollHeight*z<=AH&&w.scrollWidth<=AW/z+1&&[...w.querySelectorAll('.katex-display,.code')].every(k=>k.scrollWidth<=k.clientWidth+1))break}
+    s.style.display='';s.style.visibility='';s.classList.remove('measuring');
+    s.dataset.zoom=z.toFixed(2);
+  });
+}
+
+/* ---------- Navigation ---------- */
+const stage=$('#stage'),slides=[...document.querySelectorAll('.slide')];let cur=0;
+function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${s})`}
+function frs(s){return [...s.querySelectorAll('.frag')].map((f,i)=>[f,f.dataset.o!==undefined?+f.dataset.o:(f.getAttribute('data-o')!==null?+f.getAttribute('data-o'):i)]).sort((a,b)=>a[1]-b[1]).map(a=>a[0])}
+function go(i,all){i=Math.max(0,Math.min(slides.length-1,i));slides[cur].classList.remove('active');cur=i;const s=slides[i];
+  frs(s).forEach(f=>f.classList.toggle('shown',!!all));void s.offsetWidth;s.classList.add('active');
+  $('#fnum').textContent=(i+1)+' / '+slides.length;$('#cnt').textContent=(i+1)+'/'+slides.length;$('#prog').style.width=((i+1)/slides.length*100)+'%';
+  document.querySelector('.foot').style.display=i===0?'none':'flex';
+  try{history.replaceState(null,'','#'+(i+1))}catch(e){}}
+function next(){const f=frs(slides[cur]).find(x=>!x.classList.contains('shown'));if(f)f.classList.add('shown');else if(cur<slides.length-1)go(cur+1,false)}
+function prev(){if(cur>0)go(cur-1,true)}
+stage.addEventListener('click',e=>{if(e.target.closest('button,input,a,label,select,.ix,.mcq'))return;next()});
+document.addEventListener('keydown',e=>{const tg=e.target.tagName;
+  if(tg==='INPUT'&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;
+  if(['ArrowRight','PageDown',' ','Enter','ArrowDown'].includes(e.key)){e.preventDefault();next()}
+  else if(['ArrowLeft','PageUp','Backspace','ArrowUp'].includes(e.key)){e.preventDefault();prev()}
+  else if(e.key==='Home')go(0);else if(e.key==='End')go(slides.length-1,true);
+  else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})}});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(b)setTimeout(()=>b.blur(),0)});
+document.addEventListener('change',e=>{if(e.target.tagName==='INPUT')e.target.blur()});
+$('#bPrev').onclick=prev;$('#bNext').onclick=next;$('#bFs').onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})};
+addEventListener('resize',fit);fit();
+let h0=NaN;try{h0=parseInt(location.hash.slice(1))}catch(e){}go(isNaN(h0)?0:h0-1,!isNaN(h0));
+setTimeout(()=>$('#hint').style.opacity=0,4500);
+window.addEventListener('load',()=>{if(window.renderMathInElement)renderMathInElement(document.body,MATHOPT);(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>{autoFit();go(cur,true);setTimeout(autoFit,700);setTimeout(autoFit,2000)})});
+</script>
+</body>
+</html>
